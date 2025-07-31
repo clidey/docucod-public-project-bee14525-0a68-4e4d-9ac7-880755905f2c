@@ -3,4 +3,371 @@ title: "Tags API"
 description: "Enhance retrieval and categorization of links by managing tags. This page explains how to create, update, delete, and fetch tags for precise link organization and intelligent searching, as well as bulk tagging operations."
 ---
 
-*This page will automatically be generated from the codebase*
+# Tags API Reference
+
+Manage how you organize and discover your bookmarks with the Tags API. This API empowers you to create, update, delete, and retrieve tags, enabling precise categorization and efficient searching within your collections and links. Additionally, it supports bulk operations to streamline handling multiple tags at once.
+
+---
+
+## Overview
+
+Tags serve as flexible labels to enrich your bookmarks, helping you easily retrieve and categorize your saved links according to your personal or collaborative organizational schemes. Using the Tags API, you can maintain this system without manual UI interaction, thereby automating workflows or integrating with other tools.
+
+### Base URL
+
+All requests use the base URL:
+```
+https://your-linkwarden-instance.com/api/v1/tags
+```
+
+### Authentication
+
+Endpoints require authentication via a valid API token or session token provided in the `Authorization` header as a Bearer token.
+
+### Content Types
+
+- Request bodies and responses use JSON.
+
+### Rate Limits
+
+Refer to the [Rate Limiting & Quotas guide](/api-reference/api-usage-guides/rate-limiting-quotas) to understand request thresholds.
+
+---
+
+## Authentication & Authorization
+
+To interact with Tags API endpoints, you must authenticate and have the correct permissions. Users can only modify tags they own.
+
+- **Authorization Header**: Include `Authorization: Bearer YOUR_TOKEN`.
+- **Permissions**: Tag creation, update, or deletion requires ownership.
+- Unauthorized actions return HTTP 401 with an error message.
+
+For authentication setup and token management, see the [Authentication & Authorization guide](/api-reference/core-workflows/authentication-authorization).
+
+---
+
+## Endpoints
+
+### 1. List Tags
+
+Retrieve tags belonging to the authenticated user or associated with a specific collection.
+
+```
+GET /api/v1/tags
+```
+
+**Query Parameters:** None required for user tags. For collection tags, use the public tags endpoint (see below).
+
+**Description:** 
+Returns all tags owned by the authenticated user as well as tags accessible via collections where the user is a member.
+
+**Response:** 
+An array of tags, each including the tag name and a count of how many links are tagged.
+
+**Example Request:**
+```http
+GET /api/v1/tags
+Authorization: Bearer eyJhbGci...
+Accept: application/json
+```
+
+**Example Response:**
+```json
+{
+  "response": [
+    {"id": 101, "name": "Research", "_count": {"links": 15}},
+    {"id": 102, "name": "ReadLater", "_count": {"links": 8}}
+  ]
+}
+```
+
+---
+
+### 2. Create or Update Tags (Bulk)
+
+Create new tags or update existing ones in bulk.
+
+```
+POST /api/v1/tags
+```
+
+**Request Body:**
+```json
+{
+  "tags": [
+    {"name": "NewTag1"},
+    {"name": "UpdatedTag"}
+  ]
+}
+```
+
+**Description:**
+- Creates tags if they do not exist.
+- Updates tag names if conflicts do not exist.
+- Tags must have unique names per user.
+
+**Constraints:**
+- Disabled in demo mode.
+- Tag names must be unique and not empty.
+
+**Example Request:**
+```http
+POST /api/v1/tags
+Authorization: Bearer eyJhbGci...
+Content-Type: application/json
+
+{
+  "tags": [{"name": "Technology"}, {"name": "AI"}]
+}
+```
+
+**Example Response:**
+```json
+{
+  "response": [
+    {"id": 201, "name": "Technology"},
+    {"id": 202, "name": "AI"}
+  ]
+}
+```
+
+---
+
+### 3. Update a Single Tag
+
+Change the name of a tag you own.
+
+```
+PUT /api/v1/tags/{id}
+```
+
+- `{id}`: The numeric ID of the tag to update.
+
+**Request Body:**
+```json
+{
+  "name": "UpdatedTagName"
+}
+```
+
+**Description:**
+- Requires tag ownership.
+- The new name must be unique to the user.
+
+**Example Request:**
+```http
+PUT /api/v1/tags/201
+Authorization: Bearer eyJhbGci...
+Content-Type: application/json
+
+{
+  "name": "Tech"
+}
+```
+
+**Example Response:**
+```json
+{
+  "response": {
+    "id": 201,
+    "name": "Tech"
+  }
+}
+```
+
+**Error Responses:**
+- 400 if validation fails or name is duplicated.
+- 401 if permission denied.
+
+---
+
+### 4. Delete a Tag
+
+Remove a tag you own from the system.
+
+```
+DELETE /api/v1/tags/{id}
+```
+
+- `{id}`: The ID of the tag to delete.
+
+**Description:**
+- Only owners can delete tags.
+- Deletion removes the tag's associations with links.
+- Index versions of related links are reset to ensure search integrity.
+
+**Example Request:**
+```http
+DELETE /api/v1/tags/201
+Authorization: Bearer eyJhbGci...
+```
+
+**Example Response:**
+```json
+{
+  "response": {
+    "id": 201,
+    "name": "Tech"
+  }
+}
+```
+
+**Error Responses:**
+- 401 if permission denied.
+- 400 if tag ID is invalid.
+
+---
+
+### 5. Retrieve Public Collection Tags
+
+Get tags associated with links in a publicly available collection.
+
+```
+GET /api/v1/public/collections/tags?collectionId={collectionId}
+```
+
+- `collectionId`: Required query parameter specifying the public collection's ID.
+
+**Description:**
+- No authentication required.
+- Returns tags linked to the collection's links.
+- Returns 404 if collection not found or not public.
+
+**Example Request:**
+```http
+GET /api/v1/public/collections/tags?collectionId=55
+```
+
+**Example Response:**
+```json
+{
+  "response": [
+    {"id": 301, "name": "OpenSource"},
+    {"id": 302, "name": "Documentation"}
+  ]
+}
+```
+
+---
+
+## Data Models
+
+### Tag Object
+
+| Field       | Type     | Description                                  |
+|-------------|----------|----------------------------------------------|
+| `id`        | number   | Unique identifier for the tag.                |
+| `name`      | string   | Tag name (max 50 characters), unique per user. |
+| `_count`    | object   | Contains counts, e.g., number of links tagged. |
+
+### Tag Counts
+
+The `_count` object returns the number of links associated with the tag:
+
+```json
+"_count": {
+  "links": 12
+}
+```
+
+---
+
+## Common Use Cases & Workflows
+
+### Organize Your Bookmarks
+
+Use tags to categorize bookmarks by topic, project, priority, or any custom label. Create tags via the API during bulk imports or tag edits.
+
+### Bulk Tag Management
+
+Effortlessly create or rename multiple tags in a single API request, supporting automation for large-scale organization.
+
+### Cleaning Up Labeling
+
+Delete obsolete or misspelled tags programmatically to maintain a clean and efficient tagging system.
+
+### Public Sharing Context
+
+Fetch tags publicly available from shared collections without authentication, enabling tag-based browsing on shared content.
+
+---
+
+## Best Practices
+
+- Maintain tag name uniqueness per user to avoid confusion.
+- Limit tag names to 50 characters for consistency.
+- Use bulk tag operations for efficient large-scale management.
+- Respect ownership constraints; only modify tags you own.
+- When deleting tags, ensure dependent links' indexes are refreshed to reflect changes.
+- Handle error responses proactively, especially for permission and validation issues.
+
+---
+
+## Troubleshooting
+
+<AccordionGroup title="Common Issues and Solutions">
+<Accordion title="Error: Permission Denied">
+Ensure you are the owner of the tag before attempting updates or deletions. Check your authentication token and permissions if receiving HTTP 401 errors.
+</Accordion>
+<Accordion title="Error: Tag Name Already Taken">
+Tag names must be unique per user. Choose a different name when updating or creating to avoid conflicts.
+</Accordion>
+<Accordion title="Demo Mode Restrictions">
+In demo environments, tag creation, update, and deletion are disabled. These endpoints will return HTTP 400 with a message indicating the demo mode limitation.
+</Accordion>
+<Accordion title="Invalid Tag ID">
+Verify the tag ID is valid and numeric. Incorrect IDs result in HTTP 400 errors.
+</Accordion>
+</AccordionGroup>
+
+---
+
+## Code Examples
+
+<CodeGroup>
+```bash
+# List all your tags
+curl -H "Authorization: Bearer YOUR_API_TOKEN" \
+  https://your-linkwarden-instance.com/api/v1/tags
+```
+```javascript
+// Using fetch to create new tags in bulk
+fetch('/api/v1/tags', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${apiToken}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ tags: [{ name: 'NewTag' }, { name: 'UpdateTag' }] })
+})
+.then(res => res.json())
+.then(data => console.log(data));
+```
+```python
+import requests
+
+api_url = "https://your-linkwarden-instance.com/api/v1/tags/123"
+headers = {"Authorization": "Bearer YOUR_API_TOKEN", "Content-Type": "application/json"}
+data = {"name": "UpdatedTagName"}
+
+response = requests.put(api_url, json=data, headers=headers)
+print(response.json())
+```
+</CodeGroup>
+
+---
+
+## Related Documentation
+
+- [Authentication & Authorization](/api-reference/core-workflows/authentication-authorization) — How to authenticate API requests.
+- [Links (Bookmarks) API](/api-reference/core-workflows/bookmarks-links-api) — Manage bookmarks and link-tag associations.
+- [Collections API](/api-reference/core-workflows/collections-api) — Organize bookmarks into collections.
+- [API Token Management](/guides/advanced-usage-integrations/api-automation) — Generating and using tokens for safe API access.
+
+---
+
+Leverage the Tags API to keep your bookmark collection smartly categorized and accessible for your workflows and integrations. With bulk operations and precise permission control, managing tags at scale becomes seamless and empowering.
+
+---
+
+*End of Tags API Documentation*
