@@ -3,4 +3,237 @@ title: "Roles and Permissions"
 description: "Understand Linkwarden’s permission system, including user roles, collection-based access, and how permissions are enforced for collaborative workflows. This page explains how administrators assign roles, what rights each role confers, and how permissions are checked for actions on collections, links, and user management."
 ---
 
-*This page will automatically be generated from the codebase*
+# Roles and Permissions
+
+Linkwarden’s security framework hinges on a well-defined permission system that governs user access and actions across collections, links, and user management. This guide clarifies how roles are assigned, what powers they confer, and how permissions are rigorously enforced to ensure seamless yet secure collaboration.
+
+---
+
+## 1. Overview of Roles and Permissions
+
+At the core of Linkwarden’s collaborative experience is a granular permissions system designed to provide appropriate access to individuals while safeguarding your data and collections. Permissions operate primarily at the collection level, determining which users can view, modify, create, or manage links and configurations within.
+
+### 1.1 Role Types
+
+- **Owner**: Full control over the collection. Can manage members, update collection details, add or remove links, and assign permissions.
+- **Member**: Collaborator granted specific rights by the owner or administrators. Permissions may vary and include reading, creating, or editing links.
+- **Viewer**: Read-only access to a collection's links and metadata, without rights to modify content.
+
+### 1.2 Permission Principles
+
+- **Least Privilege**: Users receive the minimum level of access necessary to fulfill their role, minimizing the risk of unintended changes.
+- **Collection-Based Access**: Permissions are scoped per collection, allowing differentiated access across multiple groups or projects.
+- **Permission Enforcement**: Every user action validated against assigned permissions before execution.
+
+
+## 2. Assigning and Managing Roles
+
+Administrators and collection owners are responsible for assigning roles and managing permissions. This process ensures that team members have aligned access tailored to their responsibilities.
+
+### 2.1 Adding Members to a Collection
+
+1. Navigate to the collection’s settings panel.
+2. Select the option to add members by email or username.
+3. Assign an appropriate role (Member or Viewer) with defined permissions.
+4. Confirm the invite; users receive notification and gain access upon acceptance.
+
+### 2.2 Modifying Permissions
+
+- Update existing members' roles or specific permissions anytime through the collection’s management interface.
+- Owners can revoke access or adjust privileges to maintain tight control.
+
+### 2.3 Removing Members
+
+- Owners can remove collaborators from collections, immediately revoking their access and capabilities.
+
+
+## 3. Permission Enforcement in API and UI
+
+Linkwarden consistently enforces permissions across all interaction layers, including the web application UI and the API.
+
+### 3.1 Checking Permissions
+
+Before executing an action such as viewing, creating, updating, or deleting a link or collection:
+
+- The system verifies the user's role and associated rights.
+- Permission checks include ownership verification, membership confirmation, and access level validation.
+
+<AccordionGroup title="Permission Enforcement Examples">  
+<Accordion title="Checking User Authentication and Subscription Validity">  
+The `isAuthenticatedRequest` function verifies user identity and validates their subscription status, ensuring only authorized and subscribed users can proceed.
+
+```typescript
+import { NextApiRequest } from "next";
+import { getToken } from "next-auth/jwt";
+import { prisma } from "@linkwarden/prisma";
+
+type Props = {
+  req: NextApiRequest;
+};
+
+export default async function isAuthenticatedRequest({ req }: Props) {
+  const token = await getToken({ req });
+  const userId = token?.id;
+
+  if (!userId) {
+    return null;
+  }
+
+  if (token.exp < Date.now() / 1000) {
+    return null;
+  }
+
+  // check if token is revoked
+  const revoked = await prisma.accessToken.findFirst({
+    where: {
+      token: token.jti,
+      revoked: true,
+    },
+  });
+
+  if (revoked) {
+    return null;
+  }
+
+  const findUser = await prisma.user.findFirst({
+    where: {
+      id: userId,
+    },
+    include: {
+      subscriptions: true,
+    },
+  });
+
+  if (findUser && !findUser?.subscriptions) {
+    return null;
+  }
+
+  return findUser;
+}
+```
+
+This function ensures only authenticated users with active subscriptions may access secured endpoints.
+</Accordion>
+
+<Accordion title="Validating Collection Access Permissions">  
+The `getPermission` utility checks whether a user has access rights to a particular collection or link, considering both ownership and membership.
+
+```typescript
+import { prisma } from "@linkwarden/prisma";
+
+type Props = {
+  userId: number;
+  collectionId?: number;
+  linkId?: number;
+};
+
+export default async function getPermission({
+  userId,
+  collectionId,
+  linkId,
+}: Props) {
+  if (linkId) {
+    const check = await prisma.collection.findFirst({
+      where: {
+        links: {
+          some: {
+            id: linkId,
+          },
+        },
+      },
+      include: { members: true },
+    });
+
+    return check;
+  } else if (collectionId) {
+    const check = await prisma.collection.findFirst({
+      where: {
+        id: collectionId,
+        OR: [{ ownerId: userId }, { members: { some: { userId } } }],
+      },
+      include: { members: true },
+    });
+
+    return check;
+  }
+}
+```
+
+This guard protects collections by enforcing membership or ownership before allowing operations.
+</Accordion>
+
+<Accordion title="API Route Authorization Checks">  
+API endpoints, such as collection and token management, invoke verification utilities before executing user requests.
+
+```typescript
+import verifyUser from "@/lib/api/verifyUser";
+
+export default async function collections(req, res) {
+  const user = await verifyUser({ req, res });
+  if (!user) return; // Unauthorized
+
+  // Proceed based on user permissions and request method
+}
+```
+
+This pattern ensures all sensitive operations check user authorization first.
+</Accordion>
+</AccordionGroup>
+
+### 3.2 Permission Based Action Limitations
+
+Certain actions like creating or deleting collections, or managing users and tokens, may be disabled in demo mode or restricted based on user roles.
+
+<Warning>
+In the demo environment, destructive or modifying actions are disabled to safeguard the system’s integrity.
+</Warning>
+
+
+## 4. Common User Scenarios
+
+### 4.1 Adding a New Link to a Collection
+
+A user with create permission in a collection can add new bookmarks:
+
+- The system verifies user membership and `canCreate` rights.
+- If unauthorized, an informative error is returned.
+
+### 4.2 Sharing a Collection Publicly
+
+Owners can toggle `isPublic` settings, impacting permission enforcement by allowing public read access.
+
+### 4.3 Managing API Access Tokens
+
+Users can generate and revoke personal API tokens. These tokens carry permissions scoped to the user and are verified server-side before use.
+
+
+## 5. Best Practices for Admins and Owners
+
+- **Assign Roles Thoughtfully:** Consider least privilege principles when adding members.
+- **Regularly Review Permissions:** Audit member roles periodically to ensure alignment.
+- **Use Membership for Collaboration:** Invite collaborators with appropriate access rather than sharing credentials.
+- **Avoid Unnecessary Public Collections:** Keep collections private unless intentional sharing is desired.
+
+
+## 6. Troubleshooting Permission Issues
+
+- **Unauthorized Errors:** Confirm your role and membership in the collection.
+- **Action Disabled in Demo:** Verify if the feature is disabled due to the demo environment.
+- **Unexpected Access Denied:** Check if your subscription is active and your token is valid.
+- **API Token Issues:** Ensure tokens are active, not revoked, and used according to assigned scopes.
+
+<Check>
+If you encounter access problems, first verify your login session and subscription status before reaching out to administrators.
+</Check>
+
+
+## 7. Related Documentation
+
+- [Authentication Methods](https://linkwarden.com/security/auth-and-access/authentication-methods) — Secure sign-in approaches
+- [User Management and Permissions](https://linkwarden.com/guides/collaboration-sharing/user-management-permissions) — Collaborative user and permission handling
+- [API Access Tokens](https://linkwarden.com/security/auth-and-access/api-access-tokens) — Managing programmatic access
+- [Creating and Managing Collaborative Collections](https://linkwarden.com/guides/collaboration-sharing/creating-collaborative-collections) — Practical collaboration workflows
+
+---
+
+By mastering roles and permissions in Linkwarden, you ensure your collections are both secure and accessible to the right collaborators. This balance empowers productive teamwork while protecting your valuable data assets.
