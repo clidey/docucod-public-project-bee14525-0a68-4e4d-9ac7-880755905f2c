@@ -3,4 +3,264 @@ title: "API Keys & Tokens"
 description: "Programmatically generate and manage personal access tokens for secure automation and third-party integrations. Covers creating, listing, and deleting tokens, and explains best practices for safe token usage."
 ---
 
-*This page will automatically be generated from the codebase*
+# API Keys & Tokens
+
+Manage your personal API access tokens to automate workflows and securely integrate third-party applications with Linkwarden. This page guides you through generating new tokens, listing existing ones, revoking tokens you no longer need, and following best practices to keep your account secure.
+
+---
+
+## Introduction
+
+API tokens provide a secure and flexible way to programmatically access your Linkwarden account data without using your password. Use tokens to build custom automations, integrate with external tools, or access your bookmarks via the Linkwarden API.
+
+Tokens are tied to your user account and can have expiration dates for enhanced security. Revoking tokens immediately disables them, preventing any further access.
+
+---
+
+## Using API Tokens
+
+### Key User Flows:
+
+- **Create a New Token**: Generate a new personal access token via the API or the web app to start using it immediately.
+- **List Active Tokens**: Retrieve a list of your currently active tokens to monitor usage.
+- **Revoke a Token**: Disable a token to prevent future API access.
+
+These flows enable you to control your API access credentials easily and with confidence.
+
+---
+
+## Endpoint Overview
+
+### Base URL
+
+```
+https://api.linkwarden.app/api/v1/tokens
+```
+
+### Authentication
+
+All token endpoints require a valid authenticated user session or API token. You must be logged in or use an existing valid API token to perform these operations.
+
+---
+
+## Create a New Token
+
+Generate a new token that can be used for API operations.
+
+### Endpoint
+
+- **HTTP Method**: POST
+- **URL Path**: `/api/v1/tokens`
+
+### Request Body
+
+| Field   | Type   | Required | Description                             |
+|---------|--------|----------|-------------------------------------|
+| name    | string | Yes      | A unique descriptive name for the token to help you identify its purpose. |
+| expires | string | No       | Expiration duration. Allowed values:
+&nbsp;&nbsp;- `7d` (default)
+&nbsp;&nbsp;- `1m`
+&nbsp;&nbsp;- `2m`
+&nbsp;&nbsp;- `3m`
+&nbsp;&nbsp;- `never` (effectively 200 years)
+|
+
+
+### Request Example
+
+```json
+{
+  "name": "My Automation Script",
+  "expires": "1m"
+}
+```
+
+### Response
+
+- **Status**: 200 OK on success
+- **Body**: JSON object with the generated token and its metadata.
+
+Example:
+
+```json
+{
+  "secretKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token": {
+    "id": 123,
+    "name": "My Automation Script",
+    "expires": "2024-07-12T12:34:56.789Z",
+    "createdAt": "2024-06-12T12:34:56.789Z",
+    "isSession": false
+  }
+}
+```
+
+The `secretKey` is the full token string you use as an `Authorization` Bearer token in API requests. Store it securely, as it won't be shown again.
+
+### Common Errors
+
+| HTTP Status | Reason                          | Description                                       |
+|-------------|--------------------------------|-------------------------------------------------|
+| 400         | Validation error or duplicate name | The token name is missing, invalid, or already in use by you. |
+| 401         | Unauthorized                    | You are not authenticated or your session has expired. |
+| 400         | Demo mode restriction           | Token creation is disabled on the demo platform. |
+
+---
+
+## List Active Tokens
+
+Retrieve all your API tokens that are currently valid and not revoked.
+
+### Endpoint
+
+- **HTTP Method**: GET
+- **URL Path**: `/api/v1/tokens`
+
+### Response
+
+- **Status**: 200 OK
+- **Body**: Array of token metadata (no secret keys).
+
+Example:
+
+```json
+[
+  {
+    "id": 123,
+    "name": "My Automation Script",
+    "isSession": false,
+    "expires": "2024-07-12T12:34:56.789Z",
+    "createdAt": "2024-06-12T12:34:56.789Z"
+  },
+  {
+    "id": 124,
+    "name": "Temporary Integration",
+    "isSession": false,
+    "expires": "2024-06-20T12:00:00.000Z",
+    "createdAt": "2024-06-10T10:00:00.000Z"
+  }
+]
+```
+
+Tokens marked as `isSession: true` represent permanent session tokens and are managed differently.
+
+### Common Errors
+
+| HTTP Status | Reason       | Description                          |
+|-------------|--------------|------------------------------------|
+| 401         | Unauthorized | Your authentication is invalid or missing. |
+
+---
+
+## Revoke a Token
+
+Disable and invalidate an API token so it can no longer be used.
+
+### Endpoint
+
+- **HTTP Method**: DELETE
+- **URL Path**: `/api/v1/tokens/{tokenId}`
+
+### Path Parameters
+
+| Parameter | Type   | Required | Description                  |
+|-----------|--------|----------|------------------------------|
+| tokenId   | number | Yes      | ID of the token to revoke.   |
+
+### Response
+
+- **Status**: 200 OK
+- **Body**: The revoked token metadata.
+
+### Example
+
+#### Request
+
+```http
+DELETE /api/v1/tokens/123
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+#### Response
+
+```json
+{
+  "id": 123,
+  "name": "My Automation Script",
+  "revoked": true
+}
+```
+
+### Common Errors
+
+| HTTP Status | Cause             | Description                           |
+|-------------|-------------------|-------------------------------------|
+| 401         | Unauthorized      | You do not have permission to revoke this token. |
+| 400         | Invalid ID        | The token ID is invalid or missing. |
+| 400         | Demo mode enabled | Revoking tokens is disabled in the demo environment. |
+
+---
+
+## Best Practices for API Tokens
+
+- **Use Descriptive Names**: Name tokens clearly to track their purpose.
+- **Set Expiration**: Limit token lifetimes to reduce risk if compromised.
+- **Store Secrets Securely**: Treat tokens like passwords. Never share or expose them publicly.
+- **Revoke Unused Tokens**: Regularly audit and disable tokens that are no longer needed.
+- **Use Environment Variables**: Place tokens in environment variables or secure vaults during automation.
+
+---
+
+## Example Usage in API Calls
+
+Include your API token as a Bearer token in the `Authorization` header:
+
+```http
+GET /api/v1/bookmarks HTTP/1.1
+Host: api.linkwarden.app
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+Successful calls will return the requested data associated with the authenticated user.
+
+---
+
+## Troubleshooting
+
+### Unable to Create or Revoke Tokens
+- Verify you are properly authenticated.
+- Confirm you are not on the read-only demo platform.
+- Ensure the token name is unique when creating.
+
+### Token Not Working for Authentication
+- Confirm the token is not expired.
+- Check the token is not revoked (listed tokens only include active ones).
+- Confirm the token is used exactly as provided in the Authorization header.
+
+---
+
+## Additional Resources
+- [Authentication & Authorization API](https://linkwarden.com/api-reference/core-workflows/authentication-authorization)
+- [User Accounts API](https://linkwarden.com/api-reference/core-workflows/user-accounts-api)
+- [API Usage & Best Practices](https://linkwarden.com/api-reference/api-usage-guides/sdk-examples-and-snippets)
+
+---
+
+## Summary Diagram
+
+```mermaid
+flowchart TD
+  User["Authenticated User"] -->|POST /api/v1/tokens| CreateToken["Create Token"]
+  User -->|GET /api/v1/tokens| ListTokens["List Active Tokens"]
+  User -->|DELETE /api/v1/tokens/{tokenId}| RevokeToken["Revoke Token"]
+  CreateToken -->|Returns secret key & metadata| User
+  ListTokens -->|Returns token metadata list| User
+  RevokeToken -->|Returns revoked token info| User
+```
+
+---
+
+This documentation empowers you to manage your API tokens confidently and securely, enabling seamless automation and integrations with Linkwarden.
+
+
+
