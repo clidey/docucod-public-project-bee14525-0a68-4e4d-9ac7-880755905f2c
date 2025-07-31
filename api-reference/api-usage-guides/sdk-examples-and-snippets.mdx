@@ -3,4 +3,281 @@ title: "SDK Examples & Code Snippets"
 description: "Browse SDK code samples and integration snippets for popular languages/frameworks (JavaScript, TypeScript, React, React Native). Expedite development by following real-world implementation patterns."
 ---
 
-*This page will automatically be generated from the codebase*
+# SDK Examples & Code Snippets
+
+Explore practical SDK samples and code snippets designed to accelerate your integration and development process with Linkwarden's API. This page presents real-world implementation patterns and usage examples in popular languages and frameworks like JavaScript, TypeScript, React, and React Native — helping you start quickly and build confidently.
+
+---
+
+## Why SDK Examples Matter
+
+APIs provide raw interfaces for operations, but SDKs and well-crafted code snippets bridge the gap between concept and working integrations. Whether you’re building a web app, mobile client, or automation script, these examples showcase how to handle authentication, perform core resource operations, and manage user workflows programmatically — all aligned with best practices.
+
+This page is your fast track to understanding how Linkwarden’s API fits into your environment and accelerates feature delivery.
+
+---
+
+## Core SDK Usage Patterns
+
+### Authentication & Session Handling
+
+Start your integration by obtaining and managing session tokens. Below is a canonical example for signing in using username and password credentials and managing session tokens for authenticated requests.
+
+<CodeGroup>
+```javascript
+// Sign in and create a session
+async function signIn(username, password) {
+  const response = await fetch('/api/v1/session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password, sessionName: 'MyAppSession' }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.response || 'Login failed');
+  }
+  const data = await response.json();
+  return data.response.token; // Store this token for future authenticated calls
+}
+```
+```typescript
+// TypeScript: Fetch the current authenticated user
+async function fetchCurrentUser(token: string): Promise<User> {
+  const res = await fetch('/api/v1/users/me', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error('Failed to fetch user data');
+  const json = await res.json();
+  return json.response;
+}
+```
+</CodeGroup>
+
+
+### Managing Access Tokens for Automation
+
+Programmatic access requires creating personal API tokens. Use the following hooks or direct API calls to list, create, and revoke tokens securely.
+
+```javascript
+// Example: Create a new API token
+async function createApiToken(tokenName) {
+  const response = await fetch('/api/v1/tokens', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: tokenName }),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.response || 'Token creation failed');
+  }
+  const data = await response.json();
+  return data.response.token;
+}
+
+// Example: Fetch list of tokens
+async function listApiTokens() {
+  const response = await fetch('/api/v1/tokens');
+  if (!response.ok) throw new Error('Failed to fetch tokens');
+  const data = await response.json();
+  return data.response;
+}
+```
+
+### Working With Links and Collections
+
+Core to Linkwarden is managing your bookmarks (links). These examples illustrate adding, retrieving, updating, and deleting bookmarks.
+
+```javascript
+// Add a new link
+async function addLink(token, linkData) {
+  const response = await fetch('/api/v1/links', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(linkData),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.response);
+  }
+  const data = await response.json();
+  return data.response;
+}
+
+// Retrieve a specific link by ID
+async function getLinkById(token, linkId) {
+  const response = await fetch(`/api/v1/links/${linkId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) throw new Error('Failed to fetch link');
+  const data = await response.json();
+  return data.response;
+}
+
+// Update a link
+async function updateLink(token, link) {
+  const response = await fetch(`/api/v1/links/${link.id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(link),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.response);
+  }
+  const data = await response.json();
+  return data.response;
+}
+
+// Delete a link
+async function deleteLink(token, linkId) {
+  const response = await fetch(`/api/v1/links/${linkId}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.response);
+  }
+  return true;
+}
+```
+
+
+### React and React Native Hook Examples
+
+For developers using React ecosystems, Linkwarden provides data-fetching and mutation hooks built upon `react-query` for fully reactive and performant UI development.
+
+```javascript
+import { useLinks, useAddLink, useUpdateLink, useDeleteLink } from '@linkwarden/sdk';
+
+// Fetch links for a collection
+function LinksList({ collectionId }) {
+  const { links, data, isLoading, error } = useLinks({ collectionId });
+
+  if (isLoading) return <div>Loading links...</div>;
+  if (error) return <div>Error loading links: {error.message}</div>;
+
+  return (
+    <ul>
+      {links.map(link => (
+        <li key={link.id}>{link.name || link.url}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+
+### Managing Highlights
+
+Annotations and highlights enrich bookmarked content. Use these hooks to fetch, add, and remove highlights on links.
+
+```javascript
+import { useGetLinkHighlights, usePostHighlight, useRemoveHighlight } from '@linkwarden/sdk';
+
+function Highlights({ linkId }) {
+  const { data: highlights, error, isLoading } = useGetLinkHighlights(linkId);
+  const postHighlight = usePostHighlight(linkId);
+  const removeHighlight = useRemoveHighlight(linkId);
+
+  // Example: Add highlight
+  async function addNewHighlight(text, start, end) {
+    await postHighlight.mutateAsync({ text, startOffset: start, endOffset: end, linkId });
+  }
+
+  // Example: Remove highlight
+  async function deleteHighlight(id) {
+    await removeHighlight.mutateAsync(id);
+  }
+
+  if (isLoading) return <p>Loading highlights...</p>;
+  if (error) return <p>Error loading highlights.</p>;
+
+  return (
+    <ul>
+      {highlights.map(h => (
+        <li key={h.id}>
+          <span>{h.text}</span>
+          <button onClick={() => deleteHighlight(h.id)}>Delete</button>
+        </li>
+      ))}
+    </ul>
+  );
+}
+```
+
+### Handling User Preferences
+
+Managing user profile data and preferences programmatically allows seamless experience customization.
+
+```javascript
+import { useUser, useUpdateUserPreference } from '@linkwarden/sdk';
+
+function UserPreferences() {
+  const { data: user, isLoading } = useUser();
+  const updatePreference = useUpdateUserPreference();
+
+  function toggleDarkTheme() {
+    updatePreference.mutate({ theme: user.theme === 'dark' ? 'light' : 'dark' });
+  }
+
+  if (isLoading) return <p>Loading user preferences...</p>;
+
+  return (
+    <div>
+      <p>Current Theme: {user.theme}</p>
+      <button onClick={toggleDarkTheme}>Toggle Theme</button>
+    </div>
+  );
+}
+```
+
+---
+
+## Best Practices and Tips
+
+- Always securely store user session tokens and API tokens; keep them confidential.
+- Handle authentication errors gracefully by prompting re-login or token refresh.
+- Use mutative hooks in React with proper cache invalidation to keep UI state in sync.
+- Validate URLs and user inputs before sending requests to avoid server errors.
+- Respect API rate limits; implement retries with exponential backoff if necessary.
+- Use pagination and filtering parameters when fetching links to optimize data transfer.
+
+---
+
+## Troubleshooting Common Issues
+
+- **Authentication Failures**: Verify correct token usage; session tokens expire and require re-authentication.
+- **Token Creation Disabled in Demo Mode**: Creating tokens is disabled in the read-only demo environment.
+- **Invalid URL Errors**: Ensure URLs are well-formed (e.g., include scheme like https://).
+- **Permission Denied Errors**: Confirm the user or token has required API scopes and access rights.
+- **Network or CORS Errors**: Check your environment allows cross-origin requests or proxy configuration.
+
+---
+
+## Related Documentation
+
+- [Authentication & Authorization](https://linkwarden.com/api-reference/core-workflows/authentication-authorization)
+- [Links (Bookmarks) API](https://linkwarden.com/api-reference/core-workflows/bookmarks-links-api)
+- [Collections API](https://linkwarden.com/api-reference/core-workflows/collections-api)
+- [Tags API](https://linkwarden.com/api-reference/core-workflows/tags-api)
+- [Highlights API](https://linkwarden.com/api-reference/core-workflows/highlights-api)
+- [User Accounts API](https://linkwarden.com/api-reference/core-workflows/user-accounts-api)
+- [API Keys & Tokens](https://linkwarden.com/api-reference/advanced-features/tokens-and-api-keys)
+- [Error Handling & Status Codes](https://linkwarden.com/api-reference/api-usage-guides/error-handling-status-codes)
+- [Rate Limiting & Quotas](https://linkwarden.com/api-reference/api-usage-guides/rate-limiting-quotas)
+
+---
+
+Leverage these SDK examples and code snippets to unlock full automation and integration capabilities with Linkwarden. Whether building a custom front-end, internal tooling, or automating workflows, these samples provide the actionable patterns and confidence you need.
+
+Start building your next Linkwarden-powered experience today!
