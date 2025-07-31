@@ -3,4 +3,141 @@ title: "Platform Support & Extension Updates"
 description: "Information about updates to supported platforms, browser extension development, and interoperability with third-party services such as Floccus sync and Wayback Machine. This ensures users are alerted to changes that impact their environment, extension compatibility, or workflow automation."
 ---
 
-*This page will automatically be generated from the codebase*
+# Platform Support & Extension Updates
+
+Stay informed on the latest updates regarding supported platforms, browser extension developments, and integrations with third-party tools such as Floccus sync and Wayback Machine. This documentation ensures you understand changes that affect your environment, extension compatibility, and automation workflows.
+
+---
+
+## 1. Overview of Platform Support
+
+This section highlights recent changes and considerations around the operating systems and devices supported by Linkwarden, particularly focusing on mobile and web environments.
+
+### Mobile Platforms
+
+- **iOS Support:** Minimum supported iOS version remains at 12.0, ensuring compatibility across a wide range of devices. The mobile app now uses the new architecture enabled by default for improved performance and future-proofing.
+- **Android Support:** The Android builds include support for multiple CPU architectures (armeabi-v7a, arm64-v8a, x86, x86_64) allowing broader device compatibility.
+
+### Web Platform
+
+- The web app continues to use the Metro bundler for optimal React Native web builds, with static output generation.
+
+<Tip>
+When updating mobile apps, ensure your devices meet the minimum OS requirements and architectures to avoid compatibility issues.
+</Tip>
+
+---
+
+## 2. Browser Extension Development Updates
+
+Linkwarden’s browser extension ecosystem evolves along with platform changes to maintain seamless bookmark synchronization and user experience.
+
+- The integration with **Floccus sync** remains a key feature, allowing users to synchronize bookmarks across browsers efficiently.
+- Compatibility improvements address recent browser update impacts and performance enhancements.
+
+### Key Points for Developers
+
+- Review updated APIs for extension messaging and storage compatibility.
+- Optimize workflows to accommodate background process limitations in modern browsers.
+- Test interoperability with Linkwarden’s mobile and web clients to ensure consistent experience.
+
+<Check>
+Developer teams should regularly consult the Linkwarden API & Integration changelog and browser extension documentation for in-depth technical changes.
+</Check>
+
+---
+
+## 3. Integration and Interoperability Enhancements
+
+Linkwarden continues to enhance support for popular third-party services used in personal and collaborative bookmark workflows.
+
+### Floccus Synchronization
+
+- Floccus integration remains stable and updated, ensuring that bookmark changes on any device sync back to Linkwarden reliably.
+- Users may need to update Floccus to the latest version to leverage new features or security patches.
+
+### Wayback Machine Archival Interface
+
+- Archival workflows with the Wayback Machine see refinements to improve reliability when preserving webpages.
+- Users leveraging this integration benefit from automated archival requests and easier retrieval of preserved content.
+
+### Best Practices
+
+- Always update related third-party components alongside Linkwarden updates to maintain smooth interoperability.
+- Review permission settings for syncing apps to avoid connectivity interruptions.
+
+<Warning>
+Failure to keep integrations like Floccus up to date may result in sync conflicts or loss of bookmark data consistency.
+</Warning>
+
+---
+
+## 4. User Impact and Migration Considerations
+
+When platform support or integration capabilities change, users should be aware of the implications to avoid workflow disruptions.
+
+### Mobile App Users
+
+- Confirm your device's OS version aligns with updated minimum requirements (iOS 12.0+).
+- Take note of improvements enabled by the new architecture flag to benefit from better app stability and performance.
+
+### Browser Extension Users
+
+- Keep browser extensions updated to maintain compatibility with browser updates.
+- Confirm sync settings with Floccus to avoid unintentional bookmark divergence.
+
+### Administrators and Power Users
+
+- Track integration updates in deployment notes to schedule timely environment updates.
+- Communicate changes with team members, highlighting necessary app or extension upgrades.
+
+<Tip>
+Backup bookmarks and critical data before major platform updates or extensions upgrades to safeguard your collections.
+</Tip>
+
+---
+
+## 5. Troubleshooting Common Issues
+
+### Mobile Compatibility Problems
+
+- **Symptoms:** App crashes or fails to launch on older iOS versions.
+- **Solution:** Verify device OS version meets the minimum 12.0 requirement. Upgrade device OS or use compatible supported devices.
+
+### Browser Extension Sync Failures
+
+- **Symptoms:** Bookmarks do not sync properly, or conflicts arise after browser updates.
+- **Solution:** Update Floccus and Linkwarden extensions to the latest versions. Recheck browser permissions for extension operations.
+
+### Integration Failures with Wayback Machine
+
+- **Symptoms:** Archival requests fail or content retrieval is delayed.
+- **Solution:** Verify that network connections allow outbound requests to Wayback Machine services. Retry operations after stabilization.
+
+<Note>
+Consult the Troubleshooting Common Setup Problems guide for detailed troubleshooting workflows and support contact information.
+</Note>
+
+---
+
+## 6. Staying Up to Date
+
+To maintain smooth usage and integration compatibility:
+
+- Regularly review this Platform Support & Extension Updates page.
+- Subscribe to release announcements and changelogs covering breaking changes, migration guides, and integration updates.
+- Follow upgrade instructions closely especially when major platform or plugin shifts are introduced.
+
+---
+
+## 7. Additional Resources
+
+- [Mobile App Installation Guide](https://linkwarden.com/getting-started/requirements-installation/mobile-app-installation)
+- [Floccus Sync Integration Overview](https://linkwarden.com/overview/architecture-concepts/integration-overview)
+- [Browser Extension Support and Setup](https://linkwarden.com/faq/integration-support-community/browser-extension-floccus-pwa)
+- [Troubleshooting Common Setup Problems](https://linkwarden.com/getting-started/troubleshooting-faq/common-setup-issues)
+- [Wayback Machine Archival Guide](https://linkwarden.com/guides/core-user-workflows/preserving-content)
+
+---
+
+This documentation empowers users and administrators alike by highlighting crucial changes affecting supported platforms and key third-party integrations, allowing proactive management of environment compatibility and workflow continuity.
