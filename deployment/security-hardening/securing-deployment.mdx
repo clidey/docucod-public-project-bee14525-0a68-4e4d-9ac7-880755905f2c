@@ -3,4 +3,164 @@ title: "Securing Your Deployment"
 description: "Follow industry-standard security guidelines for Linkwarden deployments: configure authentication, storage, and network settings securely; manage secrets; utilize HTTPS; and apply necessary hardening measures for production use."
 ---
 
-*This page will automatically be generated from the codebase*
+# Securing Your Deployment
+
+Ensuring your Linkwarden deployment is secure is paramount for protecting sensitive bookmark data, user credentials, and maintaining overall system integrity. This guide walks you through key security considerations and best practices that must be implemented during deployment, focusing on authentication, storage, network settings, secret management, HTTPS usage, and production hardening techniques.
+
+---
+
+## 1. Authentication Configuration
+
+### Choose Strong Authentication Providers
+Linkwarden supports a wide range of authentication providers, including email/password credentials and numerous Single Sign-On (SSO) OAuth providers such as Google, GitHub, Auth0, Azure AD, and more. To secure your deployment:
+
+- **Enable only needed providers**: Disable unused authentication providers in your environment for a smaller attack surface.
+- **Enforce email verification**: Ensure users verify their email addresses before gaining full access. This mitigates fake accounts and abuse.
+- **Disable new SSO users if required**: If your organization needs to restrict new users via SSO, use the `DISABLE_NEW_SSO_USERS` environment variable.
+
+### Protect Credentials
+- Use **hashed passwords** with strong algorithms (bcrypt used internally).
+- Avoid exposing secrets or credentials in logs.
+- Regularly rotate keys and secrets associated with authentication providers.
+
+### Session Security
+- Sessions use JWT tokens with a default expiration of 30 days; consider tuning session duration based on your security needs.
+- Implement token revocation and expiration checks to prevent unauthorized reuse.
+
+<Check>
+Always verify that authentication environment variables are configured correctly according to the [Environment Configuration](https://linkwarden.com/deployment/getting-started-deployment/environment-configuration) guide.
+</Check>
+
+---
+
+## 2. Secure Storage Setup
+
+### File Storage and Database Protection
+- Choose storage backends that offer encryption at rest and strict access controls, such as encrypted disk volumes or managed cloud storage with IAM policies.
+- Secure database access credentials; do not hardcode them. Use environment variables or secret managers.
+- Regularly back up your database and file storage to prevent data loss.
+
+### Secrets Management
+- Store **all secrets and keys** (database passwords, API keys, OAuth secrets) in secure vaults or environment variables.
+- Avoid committing secrets to source control.
+- Limit access permissions strictly to processes and users that require them.
+
+<Warning>
+Do not run your Linkwarden deployment with default or exposed secrets in production environments.
+</Warning>
+
+---
+
+## 3. Network Security and HTTPS
+
+### Enable HTTPS Everywhere
+- Always serve Linkwarden behind HTTPS to encrypt traffic and prevent eavesdropping or man-in-the-middle attacks.
+- Use valid TLS certificates from trusted Certificate Authorities (Let’s Encrypt or commercial CAs).
+- Redirect all HTTP traffic to HTTPS and enforce secure cookies.
+
+### Network Configuration
+- Configure firewalls and security groups to allow only necessary inbound ports (e.g., 443 for HTTPS).
+- Restrict database and storage access to only your application servers.
+- If using cloud environments, leverage virtual private clouds (VPCs) and private subnets.
+
+### Reverse Proxy and Load Balancers
+- When deploying behind reverse proxies (Nginx, Traefik, etc.), make sure to configure HTTPS termination properly.
+- Pass necessary headers like `X-Forwarded-For` and `X-Forwarded-Proto` to preserve client IP information and protocol.
+
+<Note>
+Linkwarden can run with proxies and behind load balancers, but ensure these components themselves are secured and hardened.
+</Note>
+
+---
+
+## 4. Production Hardening
+
+### Environment Isolation
+- Run Linkwarden in an isolated environment (dedicated VM, container, or Kubernetes namespace).
+- Apply the principle of least privilege for service accounts and system users.
+
+### Configuration
+- Disable demo or read-only modes when deploying to production.
+- Set the `NEXTAUTH_SECRET` to a strong, unpredictable value to secure NextAuth sessions.
+- Enable rate limiting and request throttling at network or application level to mitigate brute force and DoS attacks.
+
+### Logging and Monitoring
+- Enable detailed application logging for security events but avoid logging sensitive data such as passwords or tokens.
+- Monitor logs for suspicious activity such as failed login attempts or token revocation.
+- Integrate with centralized monitoring and alerting tools to be promptly informed about security incidents.
+
+### Update and Patch Regularly
+- Keep Linkwarden and all its dependencies up to date with security patches.
+- Monitor security advisories relevant to your deployment platform, database, and authentication providers.
+
+---
+
+## 5. Managing API Tokens and Secrets
+
+### API Token Security
+- Generate personal API tokens only when necessary for automation.
+- Enforce scope and expiration policies on tokens if applicable.
+- Store tokens securely and never expose them publicly.
+- Revoke tokens promptly when no longer needed.
+
+### Secrets Rotation
+- Periodically rotate all secrets and tokens, including OAuth client secrets and encryption keys.
+- Plan for rolling updates to secrets with minimal downtime.
+
+---
+
+## 6. Troubleshooting Common Security Issues
+
+<AccordionGroup title="Troubleshooting Security Issues">
+
+<Accordion title="Authentication Failures">
+Authentication problems often trace back to misconfigured environment variables or revoked tokens. Verify your `.env` settings for OAuth providers and credentials. Ensure email servers are configured correctly if email verification is enabled.
+</Accordion>
+
+<Accordion title="Token Revocation Problems">
+If users report expired or revoked sessions unexpectedly, confirm that revocation lists in **prisma.accessToken** are up to date and that tokens are properly checked against this list during authentication.
+</Accordion>
+
+<Accordion title="HTTPS Configuration Errors">
+Check your TLS certificate validity, proxy settings, and that the application receives correct `X-Forwarded-Proto` headers to enable correct HTTPS enforcement.
+</Accordion>
+
+<Accordion title="Secret Exposure Risks">
+Audit your deployment process and logs for accidental secret exposures. Always use environment variables or secret management systems and restrict access tightly.
+</Accordion>
+
+</AccordionGroup>
+
+---
+
+## 7. Summary Checklist for Secure Deployment
+
+- [x] Enforced HTTPS with valid TLS certificates
+- [x] Strong and limited authentication providers enabled
+- [x] Email verification enforced where applicable
+- [x] Secure storage of secrets and credentials
+- [x] Proper session token expiration and revocation handling
+- [x] Network restrictions via firewall or security groups
+- [x] Production mode enabled with no demo settings
+- [x] Logging enabled without storing sensitive data
+- [x] Monitoring and alerting configured for security
+- [x] Regular patching and secret rotation policies in place
+
+---
+
+By following these practices, your Linkwarden deployment will maintain robust security aligned with industry standards, safeguarding user data and ensuring reliable operation in production environments.
+
+---
+
+### Additional Resources
+- [Environment Configuration Guide](https://linkwarden.com/deployment/getting-started-deployment/environment-configuration)
+- [Authentication Methods](https://linkwarden.com/security/auth-and-access/authentication-methods)
+- [API Access Tokens Documentation](https://linkwarden.com/security/auth-and-access/api-access-tokens)
+- [Monitoring and Logging Best Practices](https://linkwarden.com/deployment/operational-management/monitoring-logging)
+- [Troubleshooting Authentication Issues](https://linkwarden.com/getting-started/troubleshooting-faq/authentication-issues)
+
+---
+
+If you encounter complex security concerns or need tailored hardening, engage with security professionals or consider formal penetration testing as part of your deployment lifecycle.
+
+---
