@@ -3,4 +3,222 @@ title: "Authentication Methods"
 description: "Learn about Linkwarden’s supported authentication mechanisms, including traditional email/password login, SSO integrations (for enterprise and self-hosted users), and OAuth options where applicable. This page describes how credentials are validated and sessions created for each method."
 ---
 
-*This page will automatically be generated from the codebase*
+# Authentication Methods
+
+Linkwarden supports multiple authentication methods tailored for diverse user environments, balancing security, convenience, and enterprise integration needs. This guide explains each supported authentication mechanism, how credentials are validated in these contexts, and how user sessions are established for a seamless, secure sign-in experience.
+
+---
+
+## 1. Overview of Authentication in Linkwarden
+
+Authentication in Linkwarden ensures that only authorized users gain access to their personal or team-managed bookmarks and collections. The system supports:
+
+- Traditional username/email and password login
+- Single Sign-On (SSO) via industry-standard OAuth2/OpenID Connect providers
+- Magic link email authentication
+
+Each method validates credentials securely, initiates user sessions, and integrates subscription enforcement where applicable.
+
+---
+
+## 2. Traditional Username/Password Login
+
+This is the core authentication method supported by both cloud and self-hosted deployments.
+
+### User Flow:
+1. **User enters username or email and password** on the login form.
+2. **Credential validation** happens asynchronously:
+   - The username or email is matched case-insensitively against registered users.
+   - Passwords are securely verified using bcrypt hash comparison.
+   - If email verification is enabled, only accounts with verified emails can sign in.
+3. On success, a **session token** valid for 30 days is generated using JWT and stored.
+4. The session token is returned and securely stored client-side (e.g., secure storage on mobile).
+5. The user is redirected to their dashboard with authenticated access.
+
+### Security and Best Practices:
+- **Password Hashing:** All passwords use bcrypt with strong salting.
+- **Email Verification:** Prevents unverified users from accessing accounts if email login is enabled.
+- **Rate Limits:** Verification and login attempts are rate-limited to prevent abuse.
+
+### Example Error Cases:
+- Incorrect password or username/email returns a clear error message.
+- Unverified email prompts sending a verification link and redirects to confirmation.
+
+> **Tip:** Ensure your email SMTP settings are configured correctly to enable magic link and verification email functionality.
+
+---
+
+## 3. Email Magic Link Authentication
+
+Linkwarden supports passwordless login via magic links sent to the user's registered email.
+
+### User Flow:
+1. User enters their email in the magic link request form.
+2. The system validates the email and sends a **unique verification link** with a token valid for 20 minutes.
+3. Upon clicking, the user is automatically signed in and redirected to the dashboard.
+
+### Limitations and Protections:
+- A rate limit restricts magic link requests to prevent spam or abuse.
+- Email links are single-use and expire quickly.
+
+> **Note:** This method requires a properly configured email server (see environment configuration).
+
+---
+
+## 4. Single Sign-On (SSO) Integration
+
+For enterprise and advanced self-hosted deployments, Linkwarden integrates with numerous OAuth2 and OpenID Connect providers, enabling users to authenticate using existing identity providers.
+
+### Supported Providers Include:
+
+- Azure Active Directory (including B2C)
+- Auth0
+- GitHub
+- Google
+- Apple
+- Keycloak
+- Okta
+- Atlassian
+- Slack
+- Discord
+- And others dynamically enabled based on environment variables
+
+### How It Works:
+- Upon user selection of an SSO provider on the login page, Linkwarden redirects to the provider for authentication.
+- The provider returns user profile data which Linkwarden maps to account records.
+- If the user’s SSO account isn’t already linked, Linkwarden creates the user or links the account.
+- Newly created SSO users can be disabled based on admin policy.
+- Session tokens with user identity are generated upon successful authentication.
+
+### Session & Account Linking:
+- Each OAuth login triggers an automatic session creation.
+- For email-based SSO providers, Linkwarden attempts to bind accounts to existing emails when no prior association exists.
+
+### Subscription and Access Control:
+- During sign-in, Linkwarden verifies subscription seats for team accounts.
+- Access is blocked if subscription limits are exceeded.
+
+> **Warning:** Administrators can disable new SSO user registrations to control access.
+
+---
+
+## 5. Session Creation and Management
+
+After successful authentication, Linkwarden creates a session token with the following characteristics:
+
+- Uses JWT with a 30-day expiration (configurable via code to be effectively long-lived).
+- Session tokens are stored securely in backend (database) with metadata including device name.
+- Tokens allow stateless authentication on API requests.
+- On the client side (web or mobile), sessions are persisted securely (e.g., secure store on mobile).
+- Users can sign out to explicitly revoke sessions.
+
+### Security Best Practices:
+- Session tokens use strong, random JWT IDs.
+- Sessions are subject to expiration and revocation policies.
+- Use HTTPS to protect tokens in transit.
+
+---
+
+## 6. Handling Authentication Errors and Edge Cases
+
+Examples of handled errors:
+
+- **Invalid Credentials:** Clear message prompting users to re-enter information or reset passwords.
+- **Email Not Verified:** Triggers sending a verification email and redirects to confirmation.
+- **SSO Disabled for New Users:** Login attempts are rejected with an instruction to contact admins.
+- **Subscription Limits Exceeded:** Access blocked and advised to upgrade subscription.
+
+---
+
+## 7. Configuration and Enabling Authentication Methods
+
+Authentication methods are enabled via environment variables, making it easy to customize login flows depending on deployment context.
+
+### Key Environment Settings:
+
+| Variable                     | Purpose                                         |
+|------------------------------|------------------------------------------------|
+| `NEXT_PUBLIC_CREDENTIALS_ENABLED` | Toggles traditional username/password login    |
+| `EMAIL_FROM` & `EMAIL_SERVER`      | Enables magic link and email verification      |
+| `NEXT_PUBLIC_<PROVIDER>_ENABLED`   | Toggles each OAuth SSO provider                |
+| `DISABLE_NEW_SSO_USERS`             | Disables new SSO user registrations            |
+
+### Recommended Setup Steps:
+- Configure SMTP server for email features.
+- Enable credentials if using username/password.
+- Enable only necessary SSO providers.
+- Adjust subscription handling and limits as needed.
+
+---
+
+## 8. Practical Login Example
+
+### Using Username and Password (API Call Example)
+
+```http
+POST /api/v1/session HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "john.doe@example.com",
+  "password": "correcthorsebatterystaple",
+  "sessionName": "John's Laptop"
+}
+```
+
+On successful authentication, the server returns a JWT token:
+
+```json
+{
+  "response": {
+    "token": "eyJhbGciOiJI..."
+  },
+  "status": 200
+}
+```
+
+This token should be stored securely for subsequent API requests.
+
+---
+
+## 9. Mobile App Authentication Flow
+
+The Linkwarden mobile app uses the same backend authentication APIs.
+
+- User signs in using credentials.
+- On success, the app securely stores the JWT token using platform-appropriate secure storage.
+- The app automatically restores and validates sessions on startup.
+
+Users experiencing sign-in failures should verify credentials and network connectivity.
+
+---
+
+## 10. Troubleshooting Common Authentication Issues
+
+<AccordionGroup title="Troubleshooting Authentication">
+<Accordion title="Invalid Credentials">
+Check for typos in username/email and password. Use the password reset feature if credentials are forgotten.
+</Accordion>
+<Accordion title="Email Not Verified">
+If you receive an email verification prompt, check your inbox/spam for the verification email or request a new one.
+</Accordion>
+<Accordion title="SSO Login Fails">
+Confirm your organization allows new SSO users if you're registering for the first time. Ensure your identity provider account is active.
+</Accordion>
+<Accordion title="Session Expired Unexpectedly">
+Verify that your client stores tokens correctly and your system clock is synchronized with network time.
+</Accordion>
+</AccordionGroup>
+
+---
+
+## 11. Related Documentation
+
+- [Account Setup and First Login](/getting-started/configuration-initial-setup/account-setup-login): For first-time account registration and sign-in details.
+- [API Authentication & Authorization](/api-reference/core-workflows/authentication-authorization): Deeper technical API token handling and authorization flows.
+- [User Management and Permissions](/guides/collaboration-sharing/user-management-permissions): Managing user access and roles post-authentication.
+- [Securing Your Deployment](/deployment/security-hardening/securing-deployment): Guidance on securing authentication and network layers.
+
+---
+
+By understanding and carefully configuring Linkwarden's authentication methods, users and administrators can achieve secure, flexible access control that fits both simple personal use and complex enterprise scenarios.
