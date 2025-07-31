@@ -3,4 +3,201 @@ title: "User Privacy & Data Controls"
 description: "Learn what personal data Linkwarden stores, how long data is retained, and which privacy settings users and admins can control. Explore export/deletion workflows, public sharing controls, and link/collection visibility options to ensure you stay in control of your information."
 ---
 
-*This page will automatically be generated from the codebase*
+# User Privacy & Data Controls
+
+Welcome to the User Privacy & Data Controls guide for Linkwarden. This page empowers you to understand exactly what personal data is stored, how long it is kept, and the powerful privacy settings available to you—whether you're an individual user or an admin. Take control of your information by exploring data export and deletion workflows, public sharing controls, and link or collection visibility settings.
+
+---
+
+## 1. What Personal Data Does Linkwarden Store?
+
+Linkwarden is designed to respect your privacy and minimize data exposure. The personal data associated with your account typically includes:
+
+- **Account Information:** Username, email address, hashed passwords, profile images (avatars).
+- **User Preferences:** Theme selection, reading fonts, archival settings, and dashboard configurations.
+- **Bookmarks and Collections:** Your saved links, associated metadata, tags, and archival captures.
+- **Subscription & Usage Details:** For paid users, subscription status and seat allocation managed via Stripe.
+
+All passwords are securely hashed, and sensitive operations like email changes or password resets require verification to protect your information.
+
+### How Long Is Data Retained?
+
+Your data remains retained on Linkwarden's servers as long as your account is active. Data retention policies ensure that:
+
+- Data tied to active accounts is preserved indefinitely to support your ongoing use.
+- Upon account deletion, all personal data and bookmarks are removed promptly from primary storage.
+
+If you need more details or want to request deletion, please refer to the export/deletion workflows below.
+
+---
+
+## 2. User & Admin Privacy Settings
+
+Linkwarden provides a suite of privacy controls allowing both users and admins to manage visibility, access, and sharing.
+
+### User-Controlled Settings
+
+These are adjustable directly from your user preferences:
+
+- **Account Privacy:** Set your account to "private" to restrict who can view your bookmarks and collections.
+- **Link Visibility:** Choose if individual links or entire collections are public, shared with select users, or fully private.
+- **Public Sharing Controls:** Manage public URLs for collections or links and toggle public access on or off.
+- **Whitelisted Users:** Specify users you trust who can view content even when your account or collections are private.
+- **Archival & Preservation Preferences:** Select how your saved content is archived (screenshots, PDFs, readable versions) impacting what data is stored.
+- **Duplicate Prevention:** Enable or disable prevention of duplicate links to tidy your data.
+
+### Admin Controls
+
+Admins can manage broader privacy through:
+
+- **User Account Management:** View user compliance with privacy settings, update or remove accounts, including deleting personal data upon request.
+- **Subscription Management:** Oversee active users under a subscription, ensuring seat limits respect privacy boundaries.
+- **Policy Enforcement:** Enforce email verification, API token restrictions, and audit privacy settings on behalf of users.
+
+<Tip>
+Admins play a critical role in maintaining privacy standards by balancing user autonomy with organizational security and compliance needs.
+</Tip>
+
+---
+
+## 3. Exporting and Deleting Your Data
+
+Your right to access and control your data is key. Linkwarden supports straightforward workflows to export or delete your personal information.
+
+### Exporting Your Data
+
+You can export all your bookmarks and related metadata in a structured JSON backup file.
+
+#### Step-by-Step Export Workflow
+
+1. Navigate to the Data Export section inside account settings.
+2. Initiate the export process; Linkwarden prepares your data.
+3. Once ready, download the JSON file containing your full bookmarks, tags, collections, and preferences.
+
+Successful export ensures you have a backup or can migrate to another tool if desired.
+
+### Deleting Your Account and Data
+
+Deleting your account removes all personal information and bookmarks.
+
+#### How to Delete Your Account:
+
+1. Go to your Account Settings.
+2. Select the option to delete your account.
+3. Confirm your password to authorize deletion.
+4. Linkwarden processes the removal, ensuring all associated data is erased.
+
+<Warning>
+Account deletion is irreversible. Make sure to export needed data before proceeding.
+</Warning>
+
+---
+
+## 4. Controlling Public Sharing and Visibility
+
+Linkwarden’s flexible sharing empowers you to control who sees your links and collections.
+
+### Public Sharing Options
+
+- **Public Links & Collections:** Enable public URLs to share bookmarks or collections without requiring viewers to have a Linkwarden account.
+- **Shared Collections:** For collaborative environments, create collections shared only with select users.
+- **Visibility Settings at Link Level:** Override collection settings on individual links for finer control.
+
+### Visibility Controls Explained
+
+| Setting           | Description                                        |
+|-------------------|--------------------------------------------------|
+| Private Account   | Limits visibility to only you and whitelisted users. |
+| Public Sharing    | Links or collections are accessible via public URL. |
+| Shared Collections| Access limited to invited collaborators only.     |
+
+<Check>
+Review your sharing preferences regularly to ensure your links' visibility matches your privacy needs.
+</Check>
+
+---
+
+## 5. Managing Your Privacy Settings in the App
+
+The Linkwarden interface makes adjusting privacy straightforward.
+
+### Personalizing Privacy
+
+1. Go to **Settings** → **Preferences**.
+2. Change your **Account Privacy** toggle to private or public.
+3. Manage your whitelisted users by adding/removing trusted contacts.
+4. Set your default link behavior and archival preferences—choosing how your content is saved influences stored data size and exposure.
+
+### Controlling Link and Collection Visibility
+
+- Within your collections, use the **Sharing** settings to toggle between private, shared, and public access.
+- For individual links, adjust visibility in the link’s detail view.
+
+<Steps>
+<Step title="Add Whitelisted Users">
+Navigate to your privacy settings and locate the Whitelisted Users section. Enter usernames to allow specified users to view your private collections.
+</Step>
+<Step title="Set Collections to Public">
+Go to the collection’s settings and enable Public Sharing to generate a sharable URL.
+</Step>
+<Step title="Adjust Archival Preferences">
+Choose your preferred archival formats (screenshots, PDF, etc.) in Preferences to control data retention style.
+</Step>
+</Steps>
+
+---
+
+## 6. Common Privacy Pitfalls and How to Avoid Them
+
+- **Accidental Public Sharing:** Double-check your collection’s sharing status before sharing links externally.
+- **Unintended Whitelist Exposure:** Only add usernames you trust to your whitelist to prevent unwanted access.
+- **Outdated Export Files:** Regularly export backups; older files may not contain recent bookmarks.
+- **Forgetting Password for Data Changes:** Password changes, including email updates, require password verification—never share or lose your password.
+
+<Warning>
+Always use strong, unique passwords and enable multi-factor authentication where possible to protect your account.
+</Warning>
+
+---
+
+## 7. Troubleshooting Privacy and Data Control Issues
+
+### Can't Export Data?
+- Ensure you are logged in with an account upheld to export.
+- Check if you are in a Demo mode where export is disabled.
+- Try clearing browser cache or using an incognito session.
+
+### Issues Deleting Your Account?
+- Verify you have entered the correct password.
+- Confirm you are not restricted by Subscription or Admin policies.
+- Contact support if deletion requests fail repeatedly.
+
+### Public Sharing Not Working?
+- Confirm that the collection or link is actually set to Public.
+- Validate that sharing URLs are correct and have not been revoked.
+
+<Info>
+If issues persist, reach out to Linkwarden support or your system administrator for further assistance.
+</Info>
+
+---
+
+## 8. Summary
+
+User Privacy & Data Controls in Linkwarden provide you with transparent management of your personal information and bookmarks. From knowing what data is stored and how long, to precise control over public sharing and visibility, this guide helps you ensure your data is handled exactly as you wish. Utilize export and deletion workflows to maintain ownership of your data, and leverage privacy settings to collaborate safely or remain fully private.
+
+For admins, these controls provide the tools to enforce privacy policies while supporting team workflows.
+
+---
+
+## Additional Resources
+
+- [Authentication Methods](https://linkwarden.com/security/auth-and-access/authentication-methods)
+- [Importing, Exporting, and Migrating Bookmarks](https://linkwarden.com/guides/advanced-usage-integrations/import-export-migration)
+- [User Management and Permissions](https://linkwarden.com/guides/collaboration-sharing/user-management-permissions)
+- [Securing Your Deployment](https://linkwarden.com/deployment/security-hardening/securing-deployment)
+- [Operational Security Best Practices](https://linkwarden.com/security/security-best-practices-compliance/operational-hardening)
+
+---
+
+Maintain control. Protect your privacy. Manage your data on your terms with Linkwarden.
