@@ -3,4 +3,167 @@ title: "How do API keys and integrations work?"
 description: "Answers about generating and managing API keys for integrations and automations, including best practices for security and troubleshooting failed API calls."
 ---
 
-*This page will automatically be generated from the codebase*
+# How do API keys and integrations work?
+
+This page provides clear answers on how to generate, manage, and use API keys for integrations and automation in Linkwarden. It also outlines best practices for securing your keys and troubleshooting common issues like failed API calls.
+
+---
+
+## 1. Understanding API Keys and Integrations
+
+API keys are personal access tokens that allow you to securely integrate external applications or automate workflows with your Linkwarden account. These tokens serve as credentials for your programs or scripts to authenticate calls to the Linkwarden API without requiring your user password.
+
+Using API keys, you can:
+- Programmatically access and manage your bookmarks and collections.
+- Automate repetitive tasks such as bulk importing, tagging, or archiving.
+- Build custom integrations with other tools like browser extensions or automation workflows.
+
+Integrations use these API keys to perform actions on your behalf safely without compromising your main account credentials.
+
+<Info>
+To generate and manage API keys, navigate to the **Access Tokens** page in your user settings. This page lists all your active tokens and allows you to create new ones or revoke existing ones at any time.
+</Info>
+
+---
+
+## 2. How to Generate API Keys
+
+Follow these steps to create an access token:
+
+<Steps>
+<Step title="Open Access Tokens Page">
+Go to Settings > Access Tokens in your Linkwarden web app.
+</Step>
+<Step title="Create a New Token">
+Click the 'New Token' button to open the token creation modal.
+</Step>
+<Step title="Provide Token Details">
+Enter a descriptive name for your token to identify its purpose.
+Select an expiration period from options like 7 days, 1 month, 2 months, or never (effectively long-lived).
+</Step>
+<Step title="Generate and Copy Token">
+Submit the form. A new secret token will be generated.
+Copy this secret immediately and store it securely, as it will not be fully shown again.
+</Step>
+</Steps>
+
+Your new token becomes immediately active and can be used for API calls.
+
+### Important Notes on Token Creation
+
+- Tokens must have unique names for your account to avoid confusion.
+- Expiration ensures you periodically renew tokens for safety. Consider short expiration for increased security.
+- The interface also displays tokens’ creation and expiration dates for easy tracking.
+
+---
+
+## 3. Using API Keys in Your Integrations
+
+When making API requests to Linkwarden, include your token in the `Authorization` header like this:
+
+```http
+Authorization: Bearer <Your-Secret-API-Token>
+```
+
+This header tells Linkwarden who you are and authenticates your requests.
+
+### Example: Fetching Your Bookmarks
+
+```bash
+curl -H "Authorization: Bearer <Your-Secret-API-Token>" https://your-linkwarden-instance/api/v1/bookmarks
+```
+
+Replace `<Your-Secret-API-Token>` with the actual token string you obtained.
+
+### Security Best Practices
+
+- Never share your secret token publicly or hard-code it in client-side applications.
+- Store tokens securely using environment variables or secret management in your automation tools.
+- Revoke tokens that are compromised or no longer in use through the Access Tokens page.
+
+---
+
+## 4. Managing and Revoking API Keys
+
+Your Access Tokens page lets you see all active tokens listed with their name, creation date, and expiration.
+
+### Revoking Tokens
+
+To revoke (delete) a token:
+
+- Click the revoke/delete icon next to the token.
+- Confirm the revocation.
+
+Once revoked, the token can no longer be used for API authentication.
+
+### Renewing Tokens
+
+Since tokens can expire, plan to generate new tokens before the old ones expire to avoid integration downtime.
+
+<Note>
+Revoking tokens immediately breaks existing integrations that use them — plan token rotation carefully.
+</Note>
+
+---
+
+## 5. Troubleshooting Common API Key Issues
+
+### Problem: "Invalid or expired token" errors
+
+- Cause: Token used is revoked, expired, or mistyped.
+- Solution: Verify you are using the correct unexpired token and that it is sent in the Authorization header.
+- Tip: Generate a new token if unsure.
+
+### Problem: "Permission denied" or "Unauthorized" responses
+
+- Cause: Token lacks required permissions or user subscription is inactive.
+- Solution: Confirm your user account is active and your subscription status is valid.
+Also ensure the token belongs to your active user.
+
+### Problem: Integration unable to store or retrieve data
+
+- Cause: Token scope or API endpoint misuse.
+- Solution: Confirm you are calling supported API endpoints and using tokens with appropriate scope.
+
+### Problem: Token actions disabled in demo environment
+
+- Cause: Demo mode disables mutating actions.
+- Solution: Use a real deployed instance to create and manage API tokens.
+
+---
+
+## 6. Best Practices for Securing Your API Keys
+
+- Generate separate tokens for different integrations/projects.
+- Set expiration dates based on your operational needs.
+- Use environment variables or secure vaults to store tokens instead of embedding them in code.
+- Regularly audit and revoke tokens you no longer need.
+- Avoid exposing tokens in client-side code, public repositories, or logs.
+
+<Tip>
+Adopt the principle of least privilege: only grant and retain the token access and lifespan necessary for your use case.
+</Tip>
+
+---
+
+## 7. Advanced Integration Tips
+
+- Combine tokens with automation tools (e.g., cron jobs, CI/CD pipelines) for scheduled Linkwarden API tasks.
+- Use token metadata (the token's name) to help identify token usage and implement monitoring.
+- Detect revoked or expired tokens programmatically and trigger token renewal workflows.
+
+---
+
+## 8. Additional Resources
+
+- [Access Tokens Management UI](#)
+- [Linkwarden API Reference - Authentication & Authorization](/api-reference/core-workflows/authentication-authorization)
+- [API Keys & Tokens Guide](/api-reference/advanced-features/tokens-and-api-keys)
+- [API Usage & Automation Workflows](/guides/advanced-usage-integrations/api-automation)
+- [Troubleshooting Common Authentication Issues](/getting-started/troubleshooting-faq/authentication-issues)
+
+---
+
+Whether you’re setting up simple automation or complex third-party integrations, mastering API keys in Linkwarden empowers you to scale and customize your workflow securely and efficiently. This page guides you confidently through that journey, equipping you with actionable steps, security insights, and troubleshooting help to keep your integrations running smoothly.
+
+---
