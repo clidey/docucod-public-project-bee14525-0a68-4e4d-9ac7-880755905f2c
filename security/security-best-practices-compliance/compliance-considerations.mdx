@@ -3,4 +3,190 @@ title: "Compliance & Regulatory Considerations"
 description: "An overview of compliance responsibilities when using Linkwarden, including tips for GDPR-style privacy, audit controls, and how to remain compliant in self-hosted and cloud environments."
 ---
 
-*This page will automatically be generated from the codebase*
+# Compliance & Regulatory Considerations
+
+## Introduction
+When integrating Linkwarden into your workflows—whether in a self-hosted environment or via the cloud—understanding your compliance responsibilities is essential to maintaining trust, reducing legal risks, and safeguarding user privacy. This page guides you through key compliance areas such as GDPR-style privacy principles, audit controls, and practical tips to help you navigate regulatory landscapes confidently.
+
+Linkwarden is designed with privacy and security as priorities, but compliance ultimately depends on how you deploy and manage the platform. This guide empowers you with actionable insights to ensure your Linkwarden deployment aligns with applicable laws and internal policies.
+
+---
+
+## Navigating Compliance Responsibilities
+
+### Understanding Your Role
+As the Linkwarden user, administrator, or organization, you bear the responsibility to ensure that data handling, user access, and archival practices comply with relevant regulations such as the European Union's GDPR or other jurisdictional privacy laws. Linkwarden facilitates compliance but does not replace the need for organizational policies.
+
+Key points to internalize:
+- **Data Controller Responsibility:** If you collect or process personal data in Linkwarden, you likely act as the Data Controller and must uphold data protection principles.
+- **Data Processor Role:** Whether self-hosted or cloud-hosted, Linkwarden acts as a data processor, but you govern access, sharing, and retention.
+
+<Tip>
+Approach compliance as an ongoing operational function, not just a one-time checklist. Regularly review configurations, user permissions, and audit records.
+</Tip>
+
+---
+
+## Core Compliance Areas
+
+### 1. GDPR-Style Privacy
+Linkwarden supports GDPR core principles which you should embed into your practices:
+
+- **Data Minimization:** Limit personal data saved within the platform to what's necessary.
+- **User Consent & Rights:** Enable users to exercise data access, correction, and deletion requests.
+- **Transparency:** Clearly communicate with users about what data is collected and how it is used.
+
+In practice, this means:
+
+- Configuring user privacy controls and collection visibility thoughtfully.
+- Leveraging Linkwarden’s export and deletion API endpoints to respond to user requests swiftly.
+- Avoiding over-sharing links or collections publicly unless explicitly intended.
+
+### 2. Audit Controls & Access Logs
+
+Maintaining an audit trail is crucial for tracking user actions, detecting anomalies, and demonstrating compliance.
+
+- **User Authentication & Authorization:** Linkwarden enforces robust permission models ensuring each user accesses only authorized collections.
+- **Session & Token Management:** Access tokens and sessions are managed securely to prevent unauthorized access.
+- **Activity Logs:** While Linkwarden API endpoints record relevant user activities, you should ensure logs are preserved as per your organization's retention policy.
+
+<Tip>
+Integrate Linkwarden logs with centralized SIEM or monitoring solutions for enhanced visibility.
+</Tip>
+
+### 3. Data Retention & Archival Compliance
+
+Archived content such as PDFs and image previews stored within Linkwarden must follow data retention policies applicable to your organization or regulation.
+
+- Use configurable retention periods where possible.
+- Regularly archive or purge outdated data, respecting legal hold requirements.
+- When using cloud storage options, ensure data residency and sovereignty requirements are met.
+
+---
+
+## Compliance Considerations by Deployment Model
+
+| Deployment Model | Key Compliance Focus |
+| ---------------- | --------------------- |
+| **Self-Hosted**  | Full control over data storage, network security, and access control. You must configure environment variables and security settings proactively to ensure compliance and protect privacy. Regular backups, secure storage, and hardening your deployment are necessary. | 
+| **Cloud-Hosted** | Compliance depends on the cloud service’s guarantees combined with your management of Linkwarden user permissions and data handling. Understand your cloud provider’s certifications, data residency, and trust boundaries. Use Linkwarden's configurable privacy and permission settings effectively. |
+
+<Tip>
+Review Linkwarden’s environment configuration and securing deployment guides to fortify your self-hosted installation.
+</Tip>
+
+---
+
+## Practical Steps to Maintain Compliance
+
+### Step 1: Secure User Authentication
+- Enforce strong passwords and multi-factor authentication (if enabled).
+- Regularly review active sessions and revoke unused tokens.
+
+### Step 2: Manage User Permissions Carefully
+- Use collection-level role assignments to restrict data access.
+- Avoid granting unnecessary administrative privileges.
+
+### Step 3: Configure Data Sharing Settings
+- Limit public sharing of collections and links.
+- Educate users on implications of sharing sensitive data.
+
+### Step 4: Implement Data Subject Rights Workflow
+- Use Linkwarden APIs or UI tools to export user data upon request.
+- Facilitate data deletion requests promptly.
+
+### Step 5: Monitor and Audit Regularly
+- Review logs and user activity for suspicious behaviors.
+- Keep audit records aligned with your retention policies.
+
+### Step 6: Maintain Environment Configuration Security
+- Store secrets securely and never expose credentials.
+- Ensure HTTPS is enforced for all connections.
+
+<Tip>
+Regularly update Linkwarden and dependencies to apply latest security patches enhancing compliance posture.
+</Tip>
+
+---
+
+## Common Pitfalls and How to Avoid Them
+
+- **Over-Permissive Access:** Assign minimal necessary permissions; audit roles regularly.
+- **Ignoring Retention Policies:** Automate archival cleanup to prevent data over-retention.
+- **Lack of User Awareness:** Train your users on privacy and security best practices.
+- **Insufficient Audit Trails:** Integrate with external monitoring tools to enhance observability.
+
+<Warning>
+Failing to actively manage compliance risks can lead to data breaches, regulatory fines, and reputational damage. Treat compliance as an integral part of using Linkwarden, not an afterthought.
+</Warning>
+
+---
+
+## Reporting & Responding to Compliance Incidents
+
+While this guide focuses on preventative measures, be prepared to respond effectively to compliance incidents:
+
+- Define clear incident response and communication plans.
+- Use Linkwarden’s user management and audit data to investigate incidents.
+- Inform affected users promptly in accordance with legal requirements.
+
+Refer to the [Vulnerability Reporting & Responsible Disclosure](https://linkwarden.com/security/security-best-practices-compliance/vulnerability-reporting) section for security-specific incident handling.
+
+---
+
+## Additional Resources
+
+- [Environment Configuration](/getting-started/configuration-initial-setup/environment-configuration) – Secure your deployment environment with privacy and compliance in mind.
+- [Authentication Methods](/security/auth-and-access/authentication-methods) – Manage secure sign-ins and user authentication.
+- [User Management and Permissions](/guides/collaboration-sharing/user-management-permissions) – Control user roles and access.
+- [Data Encryption & Storage Security](/security/data-protection-privacy/data-encryption-storage) – Protect data at rest and in transit.
+- [Securing Your Deployment](/deployment/security-hardening/securing-deployment) – Harden your Linkwarden instance.
+- [User Privacy & Data Controls](/security/data-protection-privacy/privacy-user-controls) – Facilitate data subject rights.
+
+Explore these to deepen your compliance and security capabilities within Linkwarden.
+
+---
+
+## Summary
+Linkwarden offers a secure foundation for managing bookmarks and archives, but compliance is a shared responsibility dependent on your deployment choices and operational controls. By embedding privacy-by-design principles, maintaining strict access controls, and enforcing audit and retention policies, you can confidently meet GDPR-style and other regulatory requirements.
+
+Compliance is a continual journey—this guide equips you with the knowledge and steps needed to navigate regulatory considerations effectively, helping you leverage Linkwarden securely and responsibly.
+
+
+---
+
+## Troubleshooting Compliance Issues
+
+<AccordionGroup title="Troubleshooting Compliance Challenges">
+<Accordion title="Why can't users access certain collections or links?">
+Review user permissions at the collection level—ensure that users have appropriate roles and the collection is not private or restricted without their membership.
+</Accordion>
+<Accordion title="How to handle a data deletion request that isn't reflected in archives?">
+Use Linkwarden's data deletion APIs to remove user data entirely, including related archived content. Verify deletion in the UI and underlying storage.
+</Accordion>
+<Accordion title="What to do if audit logs seem incomplete or missing?">
+Check your logging configuration and integration with centralized monitoring. Confirm that deployment environment variables enable adequate logging levels.
+</Accordion>
+<Accordion title="Handling data residency concerns in cloud deployments">
+Confirm your chosen cloud provider’s data storage locations meet your jurisdictional requirements. Consider self-hosting if specific data residency is mandated.
+</Accordion>
+</AccordionGroup>
+
+---
+
+## Frequently Asked Questions
+
+<AccordionGroup title="Compliance & Privacy FAQs">
+<Accordion title="Does Linkwarden encrypt data to meet compliance needs?">
+Linkwarden encrypts sensitive data both in transit and at rest. See [Data Encryption & Storage Security](/security/data-protection-privacy/data-encryption-storage) for detailed coverage.
+</Accordion>
+<Accordion title="Is it possible to disable public sharing across the entire Linkwarden instance?">
+You can control sharing via collection permission settings to restrict public visibility, thus aligning with privacy policies.
+</Accordion>
+<Accordion title="How are user consent and privacy notices handled?">
+While Linkwarden provides the tools for data control, it is your responsibility to communicate privacy notices and gain user consent where applicable.
+</Accordion>
+<Accordion title="Are audit logs tamper-proof or exportable for compliance audits?">
+Audit logs are stored securely within your deployment environment and can be exported or integrated with external logging systems as needed to support audits.
+</Accordion>
+</AccordionGroup>
