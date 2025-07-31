@@ -3,4 +3,208 @@ title: "Operational Security Best Practices"
 description: "Practical tips for admins on deploying and maintaining a secure Linkwarden setup—covering topics like configuration management, regular upgrades, restricting public sharing, and securing environment variables and backups."
 ---
 
-*This page will automatically be generated from the codebase*
+# Operational Security Best Practices
+
+Deploying and maintaining a secure Linkwarden environment demands more than a one-time setup—it requires consistent operational vigilance and best practices. This guide empowers administrators with actionable strategies for configuration management, upgrade routines, cautious public sharing, secure environment variable handling, and careful backup procedures to protect your data and users.
+
+---
+
+## 1. Secure Configuration Management
+
+The cornerstone of a safe Linkwarden deployment is a well-maintained, secure configuration.
+
+### Use Dedicated Environment Variable Files
+
+- Store sensitive secrets and configuration details exclusively in environment variables, never hard-coded.
+- Use the provided `.env.sample` as a starting template to formalize your `.env` file.
+- Limit `.env` file access strictly to trusted admins and service accounts.
+
+### Harden `.env` and Deployment Files
+
+- Ensure `.env` files are excluded from version control by `.gitignore`.
+- For self-hosted setups, use secure vaults or secret managers to provide environment variables.
+- Regularly audit environment variables especially authentication secrets and storage keys.
+
+### Validate Configurations Regularly
+
+- After any environment or configuration change, validate the deployment’s health using the built-in health check endpoints or dashboard statuses.
+- Document your configuration changes and maintain versioned backups secured separately.
+
+<Tip>
+Leverage infrastructure-as-code or container orchestration secrets management to automate and standardize configurations, minimizing human error.
+</Tip>
+
+---
+
+## 2. Implement Regular Upgrade Cycles
+
+Keeping your deployment updated is critical to safeguard against known vulnerabilities and ensure access to security patches.
+
+### Monitor and Schedule Updates
+
+- Subscribe to Linkwarden release announcements and changelogs.
+- Schedule regular update windows to apply new releases, prioritizing security and patch releases.
+
+### Use Staging Environments
+
+- Before upgrading production, test new versions in staging or test environments to catch regressions or configuration issues.
+
+### Backup Before Upgrades
+
+- Always make a full backup of your database and storage before upgrading.
+- Verify backups are complete and restorable.
+
+### Post-Upgrade Verification
+
+- Run health checks and access tests to confirm service integrity after upgrades.
+
+<Warning>
+Neglected upgrades expose your deployment to exploits that are publicly disclosed. An attacker can leverage outdated software vulnerabilities to compromise your entire system.
+</Warning>
+
+---
+
+## 3. Restrict and Control Public Sharing
+
+Linkwarden supports public sharing of collections and bookmarks; however, careless sharing can expose sensitive information.
+
+### Best Practices for Public Sharing
+
+- Limit public sharing to only necessary collections; avoid sharing sensitive or private links publicly.
+- Educate users on the implications of making content publicly accessible.
+- Review shared collections periodically to ensure appropriate sharing scopes.
+
+### Admin Controls
+
+- Enforce organization policies restricting public sharing via user roles and permissions.
+- Regularly audit publicly shared URLs and access logs.
+
+<Note>
+Linkwarden’s permission model allows fine-grained control at the collection level—leverage this to segregate sensitive content from publicly shared collections.
+</Note>
+
+---
+
+## 4. Protect Environment Variables and Secrets
+
+Environment variables contain critical secrets such as database credentials, authentication tokens, and cloud storage access keys.
+
+### Secure Storage
+
+- Use dedicated secret management systems like HashiCorp Vault, AWS Secrets Manager, or Kubernetes secrets to store sensitive values.
+- Avoid plaintext secrets in deployment manifests.
+
+### Access Control
+
+- Restrict secret access only to necessary service accounts and administrators.
+- Use role-based access control (RBAC) aligned with least privilege principles.
+
+### Rotate Secrets Periodically
+
+- Define and adhere to a schedule to rotate database passwords, API tokens, and encryption keys.
+- Ensure rotation procedures minimize downtime and prevent credential leaks.
+
+<Check>
+Never log environment variables or secrets in plain logs or error reports.
+</Check>
+
+---
+
+## 5. Secure Backup and Disaster Recovery
+
+Backing up your data securely is essential for operational resilience.
+
+### Regular Automated Backups
+
+- Schedule frequent backups of the primary database and critical file storage.
+- Store backups encrypted both at rest and in transit.
+
+### Offsite and Redundant Storage
+
+- Store backups in offsite locations or cloud storage solutions distinct from your primary environment to evade loss in case of a local failure.
+- Maintain multiple backup copies with retention policies balancing recoverability and storage costs.
+
+### Backup Access Security
+
+- Restrict access to backups through strict permissions and access logs.
+- Avoid storing backups in publicly accessible locations.
+
+### Test Recovery Procedures
+
+- Perform regular drills to confirm you can restore the system from backups within your recovery time objectives.
+
+<Tip>
+Automate notifications on backup failures and establish a documented recovery playbook to reduce response times during incidents.
+</Tip>
+
+---
+
+## 6. Additional Operational Security Recommendations
+
+### Enable HTTPS Everywhere
+
+- Ensure all client-server traffic is encrypted using TLS.
+- Avoid configurations that allow insecure HTTP fallback.
+
+### Implement Network Segmentation and Firewalls
+
+- Limit inbound and outbound traffic to only what is necessary for Linkwarden services.
+- Use firewalls and private subnets to restrict access to backend services.
+
+### Monitor Logs and Access Patterns
+
+- Integrate Linkwarden logs with centralized logging and monitoring solutions.
+- Set alerts for suspicious activities such as repeated failed logins or unexpected API token use.
+
+### Enforce Strong Authentication
+
+- Use Multi-Factor Authentication (MFA) where supported.
+- Regularly review and revoke unused API tokens and credentials.
+
+### Document Your Security Posture
+
+- Keep an updated inventory of your deployment components, configurations, and control measures.
+- Conduct periodic security reviews and update your operational practices accordingly.
+
+---
+
+## 7. Troubleshooting Common Operational Security Issues
+
+| Issue | Possible Cause | Resolution |
+| --- | --- | --- |
+| Environment variables exposure | Misconfigured deployment or logs | Restrict `.env` file permissions, avoid logging secrets |
+| Upgrade failures | Missing backups or incompatible configs | Backup data, verify compatibility, test in staging first |
+| Data leak via public collections | Overly broad sharing permissions | Review and tighten collection sharing permissions |
+| Backup restore failures | Incomplete or corrupted backups | Regularly verify backup integrity and restore processes |
+| Unauthorized API token usage | Lost or leaked tokens | Revoke unused tokens, enforce token expiry policies |
+
+<Tip>
+For persistent issues, refer to monitoring and logging documentation to gain operational insights and contact support if necessary.
+</Tip>
+
+---
+
+## 8. Summary Checklist for Secure Operation
+
+- [x] Store secrets only in environment variables or secret managers
+- [x] Keep `.env` files secure and out of version control
+- [x] Maintain and test regular backups with encryption
+- [x] Apply timely upgrades following testing in staging
+- [x] Use least privilege roles and restrict API token use
+- [x] Control and audit public sharing diligently
+- [x] Monitor logs actively for security anomalies
+- [x] Enforce HTTPS and network security best practices
+
+Following these practices guarantees a resilient, secure Linkwarden deployment, helping admins proactively defend against threats while providing trusted bookmark management services to users.
+
+---
+
+For more detailed technical guidance, review related documentation on:
+
+- [Environment Configuration and Secrets Management](/getting-started/configuration-initial-setup/environment-configuration)
+- [Securing Your Deployment](/deployment/security-hardening/securing-deployment)
+- [Authentication Methods and API Tokens](/security/auth-and-access/authentication-methods) and (/security/auth-and-access/api-access-tokens)
+- [Backup and Disaster Recovery](/deployment/operational-management/backup-disaster-recovery)
+- [Monitoring and Logging](/deployment/operational-management/monitoring-logging)
+
+Maintaining operational security is an ongoing process—equip yourself and your team with the right habits, tools, and vigilance to safeguard your Linkwarden instance effectively.
