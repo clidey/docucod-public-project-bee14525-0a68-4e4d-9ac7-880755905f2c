@@ -3,4 +3,153 @@ title: "How does Linkwarden preserve webpages?"
 description: "Covers what formats (screenshot, PDF, reader view, single file, Wayback Machine) are generated and how/when. Explains why and how content stays accessible even if the original website disappears, addressing concerns about 'link rot'."
 ---
 
-*This page will automatically be generated from the codebase*
+# How Does Linkwarden Preserve Webpages?
+
+Linkwarden is designed to help you preserve and archive webpages effectively, ensuring your saved content remains accessible even if the original website disappears or changes. This page explains the different formats Linkwarden generates when archiving a link, the preservation process, and how these formats safeguard your information against "link rot".
+
+---
+
+## Archival Formats Linkwarden Generates
+
+When you save and archive a webpage in Linkwarden, the system can preserve it in several distinct formats, each serving a specific purpose to maximize accessibility and usability:
+
+- **Screenshot**: A visual capture of the webpage as a JPEG or PNG image.
+  - Captures the appearance of the page at a specific moment.
+  - Useful for quickly viewing the look and feel of the page without the live webpage.
+
+- **PDF**: A document format that captures a printable and portable snapshot of the webpage content.
+  - Preserves the structure and text flow in an easily shareable format.
+
+- **Reader View (Readability)**: Extracted primary content from the webpage, stripped from ads and clutter.
+  - Stored as a JSON file that includes clean HTML content suitable for distraction-free reading.
+  - Also extracts a plain text summary limited to a configurable character count.
+
+- **Monolith**: A single-file HTML archive combining all assets and content.
+  - This format allows offline viewing of the entire page exactly as it was.
+
+- **Wayback Machine Integration**: Optional automatic submission to the Internet Archive’s Wayback Machine.
+  - Ensures the webpage is stored externally on a trusted archival platform.
+
+- **Preview**: A smaller image preview generated from the page or its open graph image.
+  - Used for quickly visual identification in the interface.
+
+
+## When and How Are These Formats Generated?
+
+### Automatic, Background Archiving
+
+Once you add a link with a valid URL, Linkwarden’s background processing worker handles archiving automatically:
+
+1. **Link Assessment**: It first determines if the link points to an image, PDF, or a standard webpage by inspecting HTTP headers.
+2. **Archival Settings**: Preservation actions respect user or tag-based archival preferences, such as whether to generate screenshots, PDFs, reader views, monolith files, or submit to Wayback Machine.
+3. **Archiving Execution**:
+   - For images or PDFs, Linkwarden downloads and saves the media file directly.
+   - For webpages, Linkwarden uses a headless browser to load the page,
+     - Captures screenshots and PDFs
+     - Extracts readable content
+     - Generates monolith archives
+   - Sends the URL to Wayback Machine if enabled.
+4. **Preview Generation**: Linkwarden creates a visual preview from an Open Graph image or a low-quality screenshot.
+5. **AI Tagging (Optional)**: After archiving, Linkwarden can generate AI-based tags from the content to help organize your bookmarks.
+
+### On-Demand Re-Archiving
+
+You can manually trigger re-preservation of any archived link to get an up-to-date snapshot, clearing previous archives and regenerating formats per your preferences.
+
+### Archival File Storage
+
+Saved files such as screenshots, PDFs, and readability JSON are organized by collection and link ID in storage, ensuring easy retrieval and management.
+
+---
+
+## How Linkwarden Maintains Content Accessibility
+
+### Combating Link Rot
+
+"Link rot" is the phenomenon where links become unavailable or content changes over time. Linkwarden guards against this by:
+
+- **Multiple Independent Archives**: Storing multiple forms of the content (images, PDFs, readable extracts) so if one format fails or becomes inaccessible, others remain.
+- **Local and External Preservation**: Archiving copies locally on your configured storage and optionally submitting to the Wayback Machine.
+- **Status Indicators**: If an archive format becomes unavailable (e.g., a screenshot or PDF could not be generated), Linkwarden marks it as "unavailable" and can attempt reprocessing.
+- **Background Repair Processing**: An automated routine reviews broken or missing archives and re-processes them based on your tagging and user settings.
+
+### User and Tag Control Over Archiving
+
+- You can customize archival preferences per user or tag.
+- Archival tags on links determine which formats should be preserved.
+- If no tags are set, the system falls back to the user's defaults.
+
+### Preview and Quick Access
+
+Generating previews for archived pages allows fast loading and browsing without fetching full content, improving both speed and experience.
+
+---
+
+## Common User Scenarios
+
+### Saving a Research Article
+
+You save a research article URL tagged with `archiveAsPDF` and `archiveAsReadable`. Linkwarden will:
+
+- Save a PDF snapshot of the article.
+- Extract the article's readable content (stripped of ads and navigation).
+- Generate a preview and optionally archive it on Wayback Machine.
+
+This keeps the actual content accessible regardless of website changes.
+
+### Backing Up an Image or Media Page
+
+For image URLs, Linkwarden recognizes the media type and stores the original image file and a preview.
+
+### Periodic Archival Check
+
+Linkwarden automatically identifies archives marked as broken or unavailable and reprocesses them without user intervention, ensuring your library remains intact.
+
+---
+
+## Tips & Best Practices
+
+- **Set Archival Preferences Thoughtfully**: Use tags to specify which formats you want archived, balancing storage use and preservation level.
+- **Trigger Manual Re-Archiving When Needed**: If you notice missing archives, use the interface option to refresh.
+- **Monitor Admin Archival Actions**: Server admins can bulk clean or re-archive all links, for maintenance or troubleshooting.
+- **Use Wayback Machine Archive**: Enable silent submission to Wayback Machine for a trusted third-party backup layer.
+
+---
+
+## Troubleshooting Preservation Issues
+
+### Archive Not Created
+
+- Check if archiving is disabled via environment settings (`DISABLE_PRESERVATION`).
+- Verify that the link URL is valid and accessible.
+- Ensure storage permissions and limits are correctly set.
+
+### Broken or Unavailable Archives
+
+- Linkwarden marks archives as "unavailable" when generation fails.
+- Background jobs attempt to re-archive broken items automatically.
+- Admins can trigger bulk re-archival operations.
+
+### Large Files Not Saved
+
+- Preservation respects configurable size limits for PDFs and screenshots.
+- Large pages exceeding buffer limits might skip certain archives.
+- Adjust environment limits if needed.
+
+### Preview Not Displaying
+
+- Preview generation tries Open Graph images first, then a compressed screenshot.
+- If previews fail, check storage permissions and browser rendering.
+
+---
+
+## Related Documentation
+
+- [Preserving Web Content Forever](https://linkwarden.com/guides/core-user-workflows/preserving-content)
+- [Saving and Organizing Links](https://linkwarden.com/guides/core-user-workflows/saving-links)
+- [Environment Configuration](https://linkwarden.com/deployment/getting-started-deployment/environment-configuration)
+- [Troubleshooting Common Setup Problems](https://linkwarden.com/getting-started/troubleshooting-faq/common-setup-issues)
+
+---
+
+By understanding how Linkwarden preserves webpages in multiple formats and performs ongoing maintenance, you are assured that your curated links remain accessible, discoverable, and protected against data loss over time.
