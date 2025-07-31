@@ -3,4 +3,243 @@ title: "Authentication & Authorization"
 description: "Learn how to authenticate with the Linkwarden API using API tokens or session credentials. This page guides you through obtaining tokens, adding them to requests, authorization flows, and initial API setup. Common error cases and security best practices are also covered."
 ---
 
-*This page will automatically be generated from the codebase*
+# Authentication & Authorization
+
+## Overview
+
+Authentication and authorization form the backbone of secure interaction with the Linkwarden API. This page guides you through how to authenticate your requests using either API tokens or session credentials, explaining how to obtain these tokens, include them in your requests, and handle authorization workflows effectively.
+
+Whether you’re accessing the API programmatically for automation or integrating with third-party tools, understanding these mechanisms is critical to ensuring seamless and secure API usage.
+
+---
+
+## Authentication Methods
+
+Linkwarden provides two primary ways to authenticate API requests:
+
+- **Session-based Authentication:** Suitable for user-driven sessions, where you authenticate via username and password to obtain a session token.
+- **API Token Authentication:** For programmatic access or long-term integrations where tokens with scoped permissions provide secure access.
+
+### Session-based Authentication
+
+Session authentication is based on user credentials and creates a time-limited JSON Web Token (JWT) representing the user session.
+
+#### How to Obtain a Session Token
+
+Make a `POST` request to the `/api/v1/session` endpoint with the following JSON body:
+
+```json
+{
+  "username": "your_username_or_email",
+  "password": "your_password",
+  "sessionName": "optional descriptive name of this session"
+}
+```
+
+##### Example Request:
+
+```http
+POST /api/v1/session HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "john.doe@example.com",
+  "password": "SuperSecretPass123",
+  "sessionName": "My Laptop Session"
+}
+```
+
+If credentials are valid, the response includes a JWT token used for authenticated API calls:
+
+```json
+{
+  "response": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6..."
+  }
+}
+```
+
+#### Usage
+Include the returned token as a bearer token in the `Authorization` header in subsequent API requests:
+
+```
+Authorization: Bearer <token>
+```
+
+#### Session Lifetime and Revocation
+- Session tokens are set to expire far in the future (effectively long-lived) but can be revoked by the user or admin.
+- Expired or revoked tokens will be rejected with an HTTP 401 Unauthorized response.
+
+### API Token Authentication
+
+For automated workflows, you can create API access tokens.
+
+#### Managing API Tokens
+
+Tokens are managed via the `/api/v1/tokens` endpoint.
+
+- **List tokens:** `GET /api/v1/tokens`
+- **Create a token:** `POST /api/v1/tokens` with token details in the request body
+- **Revoke a token:** `DELETE /api/v1/tokens/{id}`
+
+##### Creating an API Token Example
+
+```http
+POST /api/v1/tokens HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer <session_token>
+
+{
+  "name": "Automation Script Token",
+  "scopes": ["read:bookmarks", "write:bookmarks"]
+}
+```
+
+Successful creation responds with the new token:
+
+```json
+{
+  "response": {
+    "token": "abcd1234efgh5678...",
+    "id": 42,
+    "name": "Automation Script Token",
+    "scopes": ["read:bookmarks", "write:bookmarks"]
+  }
+}
+```
+
+Use this token similarly as a bearer token:
+
+```
+Authorization: Bearer <api_token>
+```
+
+### Security Best Practices for Tokens
+
+- Treat tokens like passwords; do not expose them in client-side code or logs.
+- Use scoped tokens to limit access for automation.
+- Regularly review and revoke unused tokens.
+- Use HTTPS for all API interactions to secure token transmission.
+
+---
+
+## Authorization Workflows
+
+Linkwarden APIs require valid authentication tokens (session or API token) included in the HTTP `Authorization` header for most endpoints.
+
+- **No token or invalid token:** The API returns HTTP 401 Unauthorized.
+- **Expired token:** You will receive a clear error message prompting re-authentication.
+
+Ensure to handle these responses in your application gracefully by prompting users to re-authenticate or by regenerating tokens as needed.
+
+---
+
+## Error Handling
+
+Common error scenarios during authentication and authorization include:
+
+| HTTP Status | Cause                            | Description and Resolution |
+|-------------|---------------------------------|----------------------------|
+| 400 Bad Request | Invalid credentials or malformed payload | Check username/password and request body formatting |
+| 401 Unauthorized | Missing, expired, or revoked token | Re-authenticate and obtain a fresh token |
+| 403 Forbidden | Insufficient scopes for token | Verify token scopes and permissions |
+| 429 Too Many Requests | Rate limiting enforced | Retry after delay, obey API usage policies |
+
+### Example Unauthorized Response
+
+```json
+{
+  "response": "Your session has expired, please log in again."
+}
+```
+
+---
+
+## Using Authentication in API Requests
+
+### Header Example
+
+```http
+GET /api/v1/bookmarks HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+Accept: application/json
+```
+
+### Request Flow
+
+1. **Authenticate:** Obtain a session or API token
+2. **Include Token:** Add token to `Authorization` header for requests
+3. **Access Resource:** The API validates token and permission, returns requested data or error
+
+---
+
+## Troubleshooting Authentication Issues
+
+- **Invalid Credentials:** Verify username/email and password carefully, consider resetting your password.
+- **Expired Sessions:** Check token expiration and refresh by logging in again.
+- **Revoked Tokens:** If a token was revoked, generate a new one.
+- **Permission Denied:** Confirm that your token has the required scopes for the operation.
+- **Demo Restrictions:** In read-only demo mode, token creation or modification is disabled.
+
+For persistent problems, consult the [Authentication Issues Troubleshooting Guide](/getting-started/troubleshooting-faq/authentication-issues).
+
+---
+
+## Practical Tips
+
+- Use session authentication for user-facing applications where login and logout are part of the user journey.
+- Use API tokens for background jobs, CLI tools, or integrations to minimize exposure of user credentials.
+- Store tokens securely and never commit them to any public repository.
+- Leverage token expiration and revocation features to maintain strong security hygiene.
+
+---
+
+## Related Documentation
+
+- [Account Setup and First Login](/getting-started/configuration-initial-setup/account-setup-login): How end users create accounts and log in.
+- [API Keys & Tokens](/api-reference/advanced-features/tokens-and-api-keys): Detailed management of tokens.
+- [Error Handling & Status Codes](/api-reference/api-usage-guides/error-handling-status-codes): Understand API errors related to authentication.
+- [User Management and Permissions](/guides/collaboration-sharing/user-management-permissions): Configure roles and permissions affecting authorization.
+
+---
+
+## Summary
+
+Authentication and authorization in Linkwarden rely on secure token-based workflows. By obtaining either session tokens via credentials or API tokens for automation, you gain controlled access to the Linkwarden API. Proper usage of tokens in the `Authorization` header ensures your requests are securely processed, with clear error messaging and revocation capabilities to maintain security.
+
+Mastering these mechanisms empowers you to integrate, automate, and manage your Linkwarden data confidently and safely.
+
+
+---
+
+## Appendix: API Endpoint Quick Reference
+
+| Endpoint                | Method | Description                       |
+|-------------------------|--------|---------------------------------|
+| `/api/v1/session`       | POST   | Create a session token with credentials |
+| `/api/v1/tokens`        | GET    | List user API tokens             |
+| `/api/v1/tokens`        | POST   | Create a new API token           |
+| `/api/v1/tokens/{id}`   | DELETE | Revoke API token by ID           |
+
+
+---
+
+## Sample Authentication Flow (Mermaid Diagram)
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant LinkwardenAPI
+
+    Client->>LinkwardenAPI: POST /api/v1/session {username, password}
+    LinkwardenAPI-->>Client: JWT Token (session token)
+
+    Client->>LinkwardenAPI: GET /api/v1/bookmarks Authorization: Bearer <token>
+    LinkwardenAPI-->>Client: Bookmarks data
+
+    Client->>LinkwardenAPI: POST /api/v1/tokens (create API token)
+    LinkwardenAPI-->>Client: New API token
+
+    Client->>LinkwardenAPI: GET /api/v1/bookmarks Authorization: Bearer <API token>
+    LinkwardenAPI-->>Client: Bookmarks data
+```
