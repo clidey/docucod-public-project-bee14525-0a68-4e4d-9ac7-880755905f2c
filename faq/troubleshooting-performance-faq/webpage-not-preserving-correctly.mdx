@@ -3,4 +3,131 @@ title: "A webpage isn't preserving correctly—what should I do?"
 description: "Advice for when screenshots, PDFs, or readable views are missing or fail. Suggests steps to retry, common causes (unsupported pages, timeouts), and links to diagnostic logs or manual re-archiving."
 ---
 
-*This page will automatically be generated from the codebase*
+# A webpage isn't preserving correctly—what should I do?
+
+When you notice that screenshots, PDFs, or readable views of your saved webpages are missing, incomplete, or failing to load in Linkwarden, this guide will help you understand why and what steps you can take to resolve the issue.
+
+---
+
+## Common Causes for Preservation Failures
+
+### 1. Unsupported or Non-Standard Pages
+
+Some webpages rely heavily on dynamic content, scripts, or complex layouts that may not archive properly. Examples include:
+
+- Pages behind authentication or paywalls
+- Interactive web apps or dashboards
+- Sites with heavy JavaScript rendering or streaming media
+
+### 2. Timeouts During Archiving
+
+Preserving a webpage involves automated browser-based processing. If a page takes too long to load or the archival process exceeds a preset timeout, the capture may be incomplete or aborted.
+
+- Linkwarden uses a configurable timeout (default is 5 minutes) for browser-based preservation tasks.
+- Pages with lengthy load times or heavy content may trigger this timeout.
+
+### 3. Large Content Exceeding Buffer Limits
+
+Certain preservation steps impose file size or buffer limits to avoid performance issues. If the webpage's screenshots, PDFs, or archive files exceed these limits, they won't be saved.
+
+- Buffer sizes for screenshots, PDFs, archived HTML, and readable content are capped (e.g., around 100MB by default).
+
+### 4. Network or External Service Issues
+
+Failures during the archiving process can occur due to:
+
+- Inaccessible webpage URL (server down, network issues)
+- Blocked requests by anti-bot or firewall protections
+- Failure when sending archival copies to external services like Wayback Machine
+
+---
+
+## Steps to Troubleshoot and Retry Preservation
+
+Follow this practical workflow to identify and fix common preservation issues.
+
+<Steps>
+<Step title="Check Preservation Status and Formats">
+Review the saved link in the Linkwarden web app. The link's preservation formats include:
+
+- **Screenshot**: Full page JPEG/PNG image
+- **PDF**: Printable PDF archive
+- **Readable View**: Text-extracted, clean reading mode
+- **Webpage (Monolith)**: Full HTML archive capturing all page assets
+
+If one or more formats show as unavailable or missing, the preservation did not complete successfully.
+</Step>
+<Step title="Refresh or Retry Archiving">
+Linkwarden automatically retries preservation when failures are detected. To prompt a retry:
+
+- Edit and save the link to trigger a refresh
+- Use any admin or scheduled retry mechanisms available
+- Wait a few minutes and check again, since background processing runs periodically
+</Step>
+<Step title="Review Diagnostic Logs (Admin/Developer)"
+>To deeply investigate failures, access server logs where preservation workers report errors. Common diagnostic clues include:
+
+- Timeout errors (`Browser has been open for more than 5 minutes`)
+- Buffer size exceeded notifications for screenshots or PDFs
+- Monolith tool failures
+- Network fetch errors or blocked URLs
+
+If you are not an admin, report the issue along with the URL and approximate time of failure to your administrator or support contact.
+</Step>
+<Step title="Manually Re-archive or Adjust Settings">
+If issues persist:
+
+- Manually re-trigger preservation for the affected link via admin tools
+- Adjust archival settings such as increasing timeout or buffer sizes in the backend environment configuration
+- Verify that the target page is reachable and accessible without special authentication
+- For highly dynamic or complex pages, consider disabling certain archival formats (like Monolith) to improve success
+</Step>
+</Steps>
+
+---
+
+## Best Practices to Improve Preservation Success
+
+- **Save stable URLs whenever possible**, avoiding pages prone to rapid change or session-dependent content.
+
+- **Limit archiving to allowed and publicly accessible pages** to prevent access issues.
+
+- **Consider disabling preservation on specific content types** (e.g., very large PDFs or dynamic apps) if failures consistently occur.
+
+- Regularly **monitor archival health** to catch failures early.
+
+---
+
+## When Preservation Fails: What Linkwarden Does
+
+- Mark missing archives explicitly as **unavailable** to communicate preservation failure.
+
+- Automatically **retry preservation later** during periodic background processing.
+
+- Log detailed error messages internally for diagnosis.
+
+- Prevent unnecessary repeated attempts if the link is not archivable (e.g., non-HTTP URLs).
+
+---
+
+## Where to Get Further Help
+
+If you've exhausted these steps without success:
+
+- Consult your Linkwarden administrator or DevOps team.
+- Review the [Troubleshooting Common Setup Problems](https://linkwarden.com/getting-started/troubleshooting-faq/common-setup-issues) guide for environment-specific issues.
+- Reach out via your organization's support channels or community forums with detailed information including link URLs and error logs.
+
+---
+
+## Related Documentation
+
+- [Preserving Web Content Forever - Core User Workflows](https://linkwarden.com/guides/core-user-workflows/preserving-content)
+- [Environment Configuration - Increasing Timeout and Buffer Limits](https://linkwarden.com/deployment/getting-started-deployment/environment-configuration)
+- [Troubleshooting Common Setup Problems](https://linkwarden.com/getting-started/troubleshooting-faq/common-setup-issues)
+
+---
+
+With this guidance, you can effectively identify preservation failures, take corrective action, and ensure your saved webpages remain accessible and complete in Linkwarden.
+
+---
