@@ -3,4 +3,170 @@ title: "Deployment Overview"
 description: "Discover the main deployment models for Linkwarden: official Cloud offering, self-hosted Docker, and advanced options. Learn the pros and cons of each method and align your choice with your team's operational requirements."
 ---
 
-*This page will automatically be generated from the codebase*
+# Deployment Overview
+
+Welcome to the deployment overview for **Linkwarden** — a versatile bookmarking and archiving platform designed to seamlessly fit your operational requirements. This guide introduces you to the three primary deployment models available: the official Linkwarden Cloud service, self-hosted Docker-based installation, and advanced deployment options. Understanding the benefits and trade-offs of each will empower your team to select the ideal approach aligned with your infrastructure, security needs, and scalability goals.
+
+---
+
+## 1. Official Linkwarden Cloud Offering
+
+### What It Is
+The official Linkwarden Cloud is a fully managed service hosted by the Linkwarden team. It offers a hassle-free way to get started without dealing with infrastructure or configuration complexities.
+
+### Key Benefits
+- **Zero infrastructure management:** No need to provision servers, manage databases, or upkeep storage.
+- **Automatic updates:** Receive the latest features and security patches without manual intervention.
+- **Built-in scalability:** The cloud environment adapts automatically to usage demands.
+- **Backups and reliability:** Data protection and uptime are handled with professional-grade standards.
+
+### Ideal For
+- Small to medium teams or individuals who want a turn-key solution.
+- Organizations without dedicated DevOps resources.
+- Users who prioritize ease of use, frequent updates, and responsive support.
+
+### Considerations
+- Limited control over server and infrastructure configuration.
+- Hosting within Linkwarden’s cloud environment may have compliance or data residency constraints for some organizations.
+
+<Tip>
+Choosing the official cloud offering accelerates your time to value by eliminating setup tasks, enabling your team to focus directly on saving, organizing, and collaborating with bookmarks.
+</Tip>
+
+---
+
+## 2. Self-Hosted Docker Deployment
+
+### Overview
+For teams seeking full control over their deployment environment, Linkwarden supports self-hosting through a Docker Compose-based setup. This method uses containerized services including PostgreSQL for database storage and Meilisearch for fast search capabilities.
+
+### What You Get
+- Complete control over your data hosting, security configurations, and network setup.
+- Customization possibilities, such as tuning resources or integrating with your existing infrastructure.
+- Ability to deploy in your private cloud, data centers, or local environments.
+
+### Basic Deployment Flow
+1. **Prepare your environment:** Ensure Docker and Docker Compose are installed.
+2. **Configure environment variables (.env):** Set database credentials, ports, secrets, and other runtime options.
+3. **Launch services:** Use the supplied `docker-compose.yml` which orchestrates the required containers: PostgreSQL, Linkwarden backend, and Meilisearch.
+4. **Persist data:** Volumes in Docker preserve your database and search index across restarts.
+
+### Example docker-compose snippet
+```yaml
+services:
+  postgres:
+    image: postgres:16-alpine
+    env_file: .env
+    restart: always
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.12.8
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./meili_data:/meili_data
+
+  linkwarden:
+    image: ghcr.io/linkwarden/linkwarden:latest
+    env_file: .env
+    environment:
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
+    ports:
+      - 3000:3000
+    volumes:
+      - ./data:/data/data
+    depends_on:
+      - postgres
+      - meilisearch
+    restart: always
+```
+
+### Operational Tips
+- Make sure to secure your `.env` file and Docker volumes to protect sensitive data.
+- Regularly backup your PostgreSQL data and Meilisearch index.
+- Review service logs (`docker-compose logs`) for troubleshooting.
+
+### When to Choose Self-Hosting
+- When data privacy, sovereignty, or regulatory compliance require internal hosting.
+- If you need customized integration with existing systems or networks.
+- When you prefer managing the lifecycle of your services and want flexibility.
+
+<Warning>
+Self-hosting demands basic to advanced DevOps knowledge. Misconfiguration can lead to security risks or data loss. Proceed only if you have the capacity to maintain the deployment environment.
+</Warning>
+
+---
+
+## 3. Advanced Deployment Options
+
+Beyond the standard Cloud and Docker Compose approaches, Linkwarden offers flexibility for more sophisticated environments.
+
+### Custom Builds & Source Deployment
+- Clone the Linkwarden repository to build the backend or the mobile app directly.
+- Ideal for contributing to development, implementing custom features, or advanced integrations.
+
+### Kubernetes or Container Orchestration
+- You can adapt the Docker Compose stack into Kubernetes manifests or Helm charts for scalable production environments.
+- Enables fine-grained control of resources, scaling, and rolling updates.
+
+### Cloud Provider-Specific Deployments
+- Linkwarden can be deployed on popular cloud platforms (AWS, GCP, Azure) using container services or managed databases.
+- You can utilize cloud-native features such as load balancers, auto-scaling groups, and secret management.
+
+### Integration with Existing Systems
+- If you operate centralized identity or logging services, advanced deploys can integrate with SSO providers or external monitoring systems.
+
+<Info>
+Advanced options are best suited to organizations with cloud infrastructure experience seeking to embed Linkwarden deeply into their tooling ecosystem.
+</Info>
+
+---
+
+## Summary: Align Your Deployment With Your Needs
+
+| Deployment Model          | Benefits                         | Considerations                | Ideal Use Case                         |
+|--------------------------|---------------------------------|------------------------------|---------------------------------------|
+| Official Linkwarden Cloud| Hassle-free, managed, automatic | Less customization, data in cloud | Small/medium teams, fast time-to-value |
+| Self-Hosted Docker       | Full control, private hosting    | Requires maintenance and ops skills | Organizations needing control and customization |
+| Advanced Options         | Customizable, scalable, integrable | Complex setup and ops expertise required | Large or enterprise-level deployments |
+
+
+---
+
+## Next Steps
+- For cloud deployment, visit [Account Setup and First Login](https://linkwarden.com/getting-started/configuration-initial-setup/account-setup-login) to get started.
+- For self-hosting, proceed to [Self-Hosted Installation](https://linkwarden.com/getting-started/requirements-installation/self-hosted-installation) and [Environment Configuration](https://linkwarden.com/deployment/getting-started-deployment/environment-configuration).
+- To explore advanced setup, consider customizing builds or deploying on Kubernetes with existing cloud resources.
+
+
+---
+
+## Troubleshooting & Support
+
+If you encounter issues:
+- Check your environment variables and ensure Docker containers have network connectivity.
+- Review container logs for startup or runtime errors.
+- For common setup issues, consult [Common Setup Issues](https://linkwarden.com/getting-started/troubleshooting-faq/common-setup-issues).
+- Engage with the Linkwarden community or contact support for assistance.
+
+
+---
+
+Your deployment journey is the first step towards unlocking the power of Linkwarden’s bookmarking, archiving, and collaboration capabilities. Select the deployment model that fits your team's expertise and operational goals to enjoy a stable, secure, and scalable experience.
+
+
+---
+
+### References
+- [Self-Hosted Installation Guide](https://linkwarden.com/getting-started/requirements-installation/self-hosted-installation)
+- [Environment Configuration](https://linkwarden.com/deployment/getting-started-deployment/environment-configuration)
+- [Account Setup and First Login](https://linkwarden.com/getting-started/configuration-initial-setup/account-setup-login)
+- [Troubleshooting Common Setup Problems](https://linkwarden.com/getting-started/troubleshooting-faq/common-setup-issues)
+
+
+---
+
+*For a graphical view of deployment architecture and service interactions, refer to the Architecture Overview documentation.*
