@@ -3,4 +3,172 @@ title: "Why can't I add a link or import bookmarks?"
 description: "Guidance on resolving issues when adding individual links or importing from browsers/other services. Covers input errors, supported formats, API limitations, and troubleshooting permission/validation errors."
 ---
 
-*This page will automatically be generated from the codebase*
+# Why can't I add a link or import bookmarks?
+
+This FAQ page addresses common issues users encounter when adding individual links or importing bookmarks from browsers and other services into Linkwarden. It offers practical guidance to resolve input errors, understand supported formats, navigate API limitations, and troubleshoot permission or validation errors.
+
+---
+
+## 1. Common Questions
+
+### Why am I getting an error when adding a new link?
+Adding a new link requires a valid URL or proper input data. Common causes include:
+- **Invalid URL format:** The URL must be properly formed (e.g., starting with `http://` or `https://`). For example, `https://example.com` is valid, but `example` is not.
+- **Duplicate links:** If your account settings prevent duplicate URLs, the system will reject URLs that already exist in your collections.
+- **Subscription limits reached:** Your plan may restrict how many links you can save. After reaching this limit, attempts to add new links will be blocked.
+
+### What formats are supported when importing bookmarks?
+- Linkwarden supports importing bookmarks from JSON backup files structured as Linkwarden exports.
+- Imported data must conform to internal schema, primarily collections with nested links and tags.
+- URLs within imported bookmarks must be valid.
+
+### Why does the import fail or stop midway?
+- Importing fails if the file exceeds system limits on the number of links your subscription permits.
+- Invalid URLs inside the import file will be skipped silently, but errors in overall structure or data validation halt the import.
+- Network or server timeouts can interrupt imports if the dataset is very large.
+
+### Why do I see "Permission denied" or "Collection is not accessible" errors when adding or updating links?
+- You may lack the required permissions for the target collection.
+- Members can only add or modify links in collections where they have update permission.
+- Owners have full control; collaborators may be limited.
+
+### Why can't I add links during demo mode?
+- The demo environment restricts create, update, and delete actions to prevent data changes.
+- Attempting to add or edit links during demo mode will return an error.
+
+---
+
+## 2. Understanding Link Input and API Constraints
+
+### Validation of URLs
+- Before adding links, Linkwarden validates URLs for correctness.
+- Invalid URLs trigger clear error messages, prompting correction before proceeding.
+
+### Duplicate Detection
+- When enabled by user settings, duplicate detection considers URLs with or without "www." as equivalent.
+- Cleaning and trimming URL strings is automatic to ensure consistent matching.
+
+### Collection Permissions
+- Links are always associated with a collection.
+- You must have at least update permission for the collection to add or modify links.
+- Moving a link to another collection requires ownership or elevated rights.
+
+### API Rate Limits and Quotas
+- Importing large numbers of bookmarks may be limited by subscription quotas.
+- The system enforces limits to maintain system availability and fair usage.
+
+---
+
+## 3. Troubleshooting Steps
+
+<Steps>
+<Step title="Check URL Format">
+Ensure links you add have correct URL syntax. Use a full URL starting with `http://` or `https://`.
+</Step>
+<Step title="Verify Collection Access">
+Confirm you have permission to add or update links in the selected collection.
+</Step>
+<Step title="Check for Duplicate Links">
+If duplicates are prevented, check if the link already exists in your collections.
+</Step>
+<Step title="Confirm Subscription Limits">
+Check your active subscription and link limits to verify if you can add more links.
+</Step>
+<Step title="Review Import File Format">
+For imports, ensure your bookmark JSON file follows the structure exported by Linkwarden.
+</Step>
+<Step title="Retry Import for Large Files in Batches">
+Split large imports into smaller chunks to avoid server timeouts.
+</Step>
+<Step title="Avoid Demo Mode Restrictions">
+If using the demo, realize that adding or editing links is disabled.
+</Step>
+<Step title="Consult Logs or Error Messages">
+Review any error messages for specifics on validation or permission failures.
+</Step>
+</Steps>
+
+---
+
+## 4. Best Practices for Adding Links and Importing Bookmarks
+
+- **Prepare your URLs:** Always validate and clean URLs before adding or importing.
+- **Organize collections first:** Ensure collections exist and you have access rights before bulk import.
+- **Monitor your usage:** Be aware of your subscription limits to avoid interruptions.
+- **Use supported formats:** Import Linkwarden JSON backups for smooth migration.
+- **Backup before import:** Always keep a copy of your data before major imports.
+
+---
+
+## 5. Common Error Messages Explained
+
+<AccordionGroup title="Common Errors and How to Fix Them">
+<Accordion title="Invalid URL">
+This error appears when the URL format is incorrect or incomplete. Fix by entering a complete URL including protocol (e.g., https://).
+</Accordion>
+<Accordion title="Link already exists">
+Triggered when duplicate prevention is enabled and the system finds an existing link with the same or equivalent URL.
+</Accordion>
+<Accordion title="Permission denied">
+You lack rights to add or update links in the designated collection. Verify your access permissions with the collection owner.
+</Accordion>
+<Accordion title="Your subscription has reached the maximum number of links allowed">
+Prevents adding links if your plan limits are exceeded. Upgrade your subscription or delete existing links to proceed.
+</Accordion>
+<Accordion title="This action is disabled because this is a read-only demo">
+Modifications are blocked in demo mode environments. Use a full installation to add or import links.
+</Accordion>
+</AccordionGroup>
+
+---
+
+## 6. Additional Tips and Resources
+
+- To avoid errors, add links first via the web or mobile interface, which performs client-side validation before invoking API calls.
+- When importing bookmarks from browsers or other apps, export to Linkwarden-compatible JSON and remove unsupported metadata.
+- Use Linkwarden’s import feature within the web app to automate collection and tag setup during import.
+- For advanced bulk operations and error diagnostics, refer to [Importing, Exporting, and Migrating Bookmarks](/guides/advanced-usage-integrations/import-export-migration) and [Saving and Organizing Links](/guides/core-user-workflows/saving-links).
+
+---
+
+## 7. Getting Further Help
+
+If issues persist:
+- Review your user permissions and roles as described in [User Management and Permissions](/guides/collaboration-sharing/user-management-permissions).
+- Confirm your subscription and limits in your account settings.
+- Consult the [Troubleshooting Common Setup Problems](/getting-started/troubleshooting-faq/common-setup-issues) page.
+- Reach out to Linkwarden support or community forums for assistance.
+
+---
+
+### Related Documentation
+
+- [How do I add and organize links?](/faq/getting-started-usage-faq/how-do-i-add-links)
+- [Importing, Exporting, and Migrating Bookmarks](/guides/advanced-usage-integrations/import-export-migration)
+- [Authentication & Authorization](/api-reference/core-workflows/authentication-authorization)
+- [User Management and Permissions](/guides/collaboration-sharing/user-management-permissions)
+- [Subscription Plans and Limits](/api-reference/advanced-features/subscriptions-and-billing)
+
+---
+
+For developers and integrators interested in API details relevant to adding links and import issues, see the [Links API Reference](/api-reference/core-workflows/bookmarks-links-api) and [Error Handling & Status Codes](/api-reference/api-usage-guides/error-handling-status-codes).
+
+---
+
+This page complements the broader user workflows and troubleshooting documentation to help you resolve common issues quickly and effectively, achieving a smooth experience adding and importing your valuable links in Linkwarden.
+
+
+---
+
+<Check>
+Ensure your URLs are valid and collections permissions are correct before adding or importing.
+</Check>
+<Tip>
+Prepare import files using Linkwarden’s export format to avoid compatibility issues.
+</Tip>
+<Warning>
+Do not exceed your subscription link limits; upgrade plans if necessary to import large datasets.
+</Warning>
+<Info>
+Demo mode disables editing features; switch to a full deployment to add or import links.
+</Info>
