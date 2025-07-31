@@ -3,4 +3,175 @@ title: "Backup and Disaster Recovery"
 description: "Establish simple, reliable backup routines for your Linkwarden instance’s database and storage. Learn recommended strategies for restoring service after an incident, including recovery of archives, user data, and configuration."
 ---
 
-*This page will automatically be generated from the codebase*
+# Backup and Disaster Recovery for Linkwarden
+
+Ensure your Linkwarden deployment remains resilient by establishing robust backup routines and disaster recovery strategies focused on the preservation of your bookmarks, archives, and configuration data. This guide walks you through recommended procedures to safeguard your data and outlines practical recovery methods to restore service quickly after an incident.
+
+---
+
+## 1. Backup Strategy Essentials
+
+### 1.1. What to Back Up
+
+To maintain full recovery capability, back up these core components:
+
+- **Database**: Contains all bookmarks (links), collections, users, tags, and archival metadata.
+- **File Storage**: Includes archived assets such as screenshots, PDFs, monolith files, readability archives, previews, and image files, stored typically in the `archives/` directory structure.
+- **Configuration Files and Environment**: `.env` files with environment variables for database connection, storage settings, archival feature toggles, and security secrets.
+
+### 1.2. Backup Frequency and Retention
+
+- Perform **daily backups** of both the database and file storage to capture recent changes without significant data loss risk.
+- Retain backups for at least **30 days** to cover a reasonable recovery window.
+- Use incremental backups if your storage supports them to optimize space and reduce backup time.
+
+### 1.3. Backup Verification
+
+- Periodically verify backup integrity by performing test restores to an isolated environment.
+- Confirm database restoration works and that archived files remain accessible and intact.
+
+<Tip>
+Establish automated backup verification as part of your routine to prevent surprises during actual recovery scenarios.
+</Tip>
+
+---
+
+## 2. Recommended Backup Technologies
+
+- **Database Backups**:
+  - Use native PostgreSQL tools like `pg_dump` for logical backups or `pg_basebackup` for physical backups.
+  - Consider managed database services with automated backup features if using cloud-hosted databases.
+- **File Storage Backups**:
+  - Sync the `archives` folder to reliable object storage services such as AWS S3, GCS, Azure Blob Storage, or an equivalent.
+  - Use tools like `rsync`, or cloud CLI tools to copy and version files.
+
+<Note>
+Ensure your backup solution encrypts data at rest and in transit to maintain confidentiality and integrity.
+</Note>
+
+---
+
+## 3. Disaster Recovery Procedures
+
+### 3.1. Scenario: Database Failure or Loss
+
+**Recovery Steps:**
+
+1. Restore the latest consistent backup of the database.
+2. Import database dump or apply recovery from physical backup.
+3. Verify the restoration by checking key entities such as users, collections, and links.
+4. Restart Linkwarden services and validate application functionality.
+
+<Tip>
+Maintain backup logs with timestamps and checksums to identify the most reliable restore point.
+</Tip>
+
+### 3.2. Scenario: Loss or Corruption of Archived Files
+
+**Recovery Steps:**
+
+1. Restore archived files from your file storage backup mirror.
+2. Validate key archived file locations, including:
+   - Screenshots and PDFs in paths like `archives/{collectionId}/{linkId}.jpeg` or `.pdf`
+   - Readability JSON files in `archives/{collectionId}/{linkId}_readability.json`
+   - Monolith archives and preview images
+3. If file loss is detected but metadata remains, use Linkwarden's archival reprocessing APIs or interfaces to re-archive missing content.
+
+### 3.3. Scenario: Configuration or Environment Issues
+
+- Restore your `.env` file from secure backup.
+- Confirm secrets such as database connection strings, storage credentials, and archival API keys are intact.
+- For critical secrets, maintain separate secure vault copies (e.g., HashiCorp Vault, AWS KMS).
+
+---
+
+## 4. Restoring Service After an Incident
+
+To resume normal operation after recovery:
+
+1. Deploy restored database and file storage.
+2. Validate connectivity with the storage backend and ensure application can access archived files.
+3. Run health checks by verifying bookmarks and archives accessibility via Linkwarden's web interface.
+4. If archives are marked as "unavailable" (due to prior failures), trigger re-preservation using API endpoints or the admin interface to repair broken archives.
+
+<Note>
+The Linkwarden archival system flags broken or missing archives with "unavailable" status. Re-processing these links restores archival data.
+</Note>
+
+---
+
+## 5. Using Linkwarden Archival Cleanup and Re-Preservation APIs
+
+Linkwarden provides APIs for maintenance of archival data, useful during disaster recovery:
+
+- **Delete Preservation Data:** Remove archival files and metadata for selected links.
+- **Purge All Preservation Data:** For admins, clear archives in bulk, useful for troubleshooting or re-archiving.
+- **Re-preserve Broken Archives:** Automatically identify and re-archive links marked with "unavailable" files.
+
+Example API call to trigger re-archiving for a link:
+
+```http
+PUT /api/v1/links/{id}/archive
+Content-Type: application/json
+
+{
+  "rearchive": true
+}
+```
+
+Refer to the [Archive & Preservation API documentation](/api-reference/advanced-features/archive-preservation-api) for detailed usage.
+
+---
+
+## 6. Best Practices for Backup and Recovery
+
+- **Automate Everything:** Schedule backups, monitoring, and recovery test procedures to reduce manual error.
+- **Secure Access:** Protect backups with strict access permissions and encrypt sensitive data.
+- **Monitor Storage Health:** Use monitoring tools to alert on storage failures, backup job errors, or unusual activity.
+- **Document Your DR Plan:** Have a clear runbook accessible for your team covering backup restoration steps and verification procedures.
+
+<Tip>
+Leverage the Linkwarden worker logs and monitoring capabilities to detect archival processing failures early and prevent data inconsistency.
+</Tip>
+
+---
+
+## 7. Troubleshooting Common Backup and Recovery Issues
+
+<AccordionGroup title="Troubleshooting Scenarios">
+<Accordion title="Database Connection Failures After Restore">
+- Verify database credentials in environment variables.
+- Check that the database server is running and network reachable.
+- Ensure the restored database schema matches expected version.
+- Review logs for schema migration errors or failed connections.
+</Accordion>
+<Accordion title="Archived Files Not Showing in UI">
+- Confirm file permissions and storage accessibility.
+- Validate the file paths in the database match the restored archive locations.
+- Check for 'unavailable' flags indicating missing archives.
+- Trigger re-archiving workflows if content is missing.
+</Accordion>
+<Accordion title="Backup Files Corrupted or Incomplete">
+- Check backup scripts or jobs for failure signs.
+- Use checksum or hash verification post-backup.
+- Store backups in redundant storage or off-site to avoid simultaneous loss.
+</Accordion>
+<Accordion title="Environment Variables Missing or Misconfigured">
+- Cross-check `.env` files with your backup copies.
+- Validate keys like `DATABASE_URL`, storage credentials, and archival toggles.
+- Restart services after environment changes.
+</Accordion>
+</AccordionGroup>
+
+---
+
+## 8. Additional Resources
+
+- [Environment Configuration Guide](/deployment/getting-started-deployment/environment-configuration) for setup and securing sensitive variables.
+- [Monitoring and Logging Guide](/deployment/operational-management/monitoring-logging) for proactively tracking Linkwarden health.
+- [Preserving Web Content Forever Guide](/guides/core-user-workflows/preserving-content) to understand archival workflows.
+- [Archive & Preservation API Reference](/api-reference/advanced-features/archive-preservation-api) for programmatic archival management.
+
+---
+
+Maintaining effective backup and disaster recovery processes ensures that your Linkwarden deployment reliably protects your valuable link data and archives, enabling swift recovery and continuity with minimal data loss and downtime.
