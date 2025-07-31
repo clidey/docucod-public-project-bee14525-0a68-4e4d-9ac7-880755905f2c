@@ -3,4 +3,196 @@ title: "How do I add and organize links?"
 description: "Step-by-step answers for adding websites or articles, using collections, tags, and descriptions. Clarifies options available across web, mobile, browser extensions, and bulk import to simplify link capture for new users."
 ---
 
-*This page will automatically be generated from the codebase*
+# How do I add and organize links?
+
+Welcome to your step-by-step guide on adding and organizing links in Linkwarden. Whether you're capturing websites, articles, images, or PDFs, this page will show you how to efficiently save, categorize, and enrich your bookmarks using collections, tags, and descriptions — all from the web app, mobile app, browser extensions, or bulk import.
+
+---
+
+## 1. Adding Links: Your Basics to Capture the Web
+
+Linkwarden makes adding links intuitive across platforms. Here’s how to get started:
+
+### Web App
+
+- Use the **New Link** button or modal to add a URL.
+- Enter the URL directly; Linkwarden fetches the page title automatically to suggest a friendly name.
+- Choose or create a **Collection** to store the link.
+- Add **Tags** for better categorization.
+- Provide an optional **Description** to annotate why the link is important or what it contains.
+
+### Mobile App
+
+- Open the Add Link action sheet.
+- Paste the link URL and save.
+- You can edit collections, tags, and descriptions later.
+
+### Browser Extensions
+
+- Quickly add the current page to Linkwarden with a single click.
+- Assign collections and tags on the fly.
+
+### Bulk Import
+
+- Use the import feature to upload bookmarks from files like HTML exports.
+- Links retain their structure and can be reorganized post-import.
+
+<Tip>
+Start simple: Add links with just URLs and collections. You can add tags and descriptions anytime later to enrich organization incrementally.
+</Tip>
+
+## 2. Organizing Links: Collections, Tags, and Descriptions
+
+Organization transforms your saved links from a list into a searchable, meaningful library.
+
+### Collections
+
+- Act as folders or thematic groups.
+- Can be created on-the-fly when adding links or managed separately.
+- Consider Collections for broad topics or projects.
+- Linkwarden lets you select an existing collection or create a new one.
+
+### Tags
+
+- Serve as flexible labels that cut across collections.
+- Useful for nuanced categorization like content type, status, or any custom keyword.
+- Tags can be assigned during link creation or edited later.
+
+### Descriptions
+
+- Add your personal notes or summaries tied to the content.
+- Help recall the context or key takeaways.
+- Make your bookmarks actionable and insightful.
+
+### Pinning Links
+
+- Pin important links to your dashboard for quick access.
+- Use the pin/unpin feature from link actions.
+
+## 3. Step-by-Step: Adding a Link Via the Web App
+
+<Steps>
+<Step title="Open the New Link Modal">
+Click the “New Link” button usually found in the header or sidebar.
+</Step>
+<Step title="Enter the Link URL">
+Paste or type the website’s URL. Linkwarden will automatically fetch the page title to pre-fill the name field after a moment.
+</Step>
+<Step title="Select or Create a Collection">
+Choose an existing collection or create a new one by typing its name.
+</Step>
+<Step title="Add Tags (Optional)">
+Select existing tags or create new ones to add more context.
+</Step>
+<Step title="Write a Description (Optional)">
+Provide additional notes or details about the link.
+</Step>
+<Step title="Save the Link">
+Click the create button to save your bookmark and see it immediately added to your library.
+</Step>
+</Steps>
+
+<Tip>
+If you only have a URL and no collection selected, the link will be saved into a default 'Unorganized' collection, helping keep your spaces tidy.
+</Tip>
+
+## 4. Editing and Managing Existing Links
+
+After saving, you can:
+
+- **Edit Link Details:** Update URL, name, tags, collection, and description using the link’s action menu.
+- **Delete Links:** Remove unwanted bookmarks cleanly with confirmation.
+- **Pin/Unpin Links:** Highlight your most-used or important links.
+- **Refresh Archival:** Update preserved content snapshots if used.
+
+
+## 5. Organizing at Scale: Bulk Editing and Imports
+
+If you have many links:
+
+- Use the bulk edit feature to update collections or tags across multiple links.
+- Import bookmark files from other browsers or tools.
+
+<Tip>
+For heavy users, regular review and organization using collections and tags will maintain a streamlined, powerful knowledge base.
+</Tip>
+
+## 6. Common Questions
+
+### Can I create new collections and tags when adding a link?
+Yes, Linkwarden lets you create both collections and tags on-the-fly during link creation for seamless workflow.
+
+### What happens if I add a link without selecting a collection?
+It is saved to your default 'Unorganized' collection to avoid lost bookmarks.
+
+### How do I avoid duplicates?
+Linkwarden respects your user settings to prevent duplicate links from being added within collections.
+
+### Can I pin links to my dashboard?
+Yes, use the pin action to keep key links visible and quickly accessible.
+
+### Can I add other types besides URLs?
+Yes, Linkwarden supports PDFs and images as link types, and they can be added similarly.
+
+## 7. Troubleshooting Tips
+
+- **Link Not Saving:** Ensure your link URL is valid. It must be a proper web address.
+- **Tags Missing:** Refresh or re-select, ensuring tags exist for your user or collection scope.
+- **Collections Not Visible:** Verify you have permission to access or add to the collection.
+- **Bulk Edits Not Applying:** Check that you have selected the desired links before bulk update.
+
+## 8. Next Steps and Related Guides
+
+To deepen your mastery:
+
+- Explore [Saving and Organizing Links](/guides/core-user-workflows/saving-links) for extended workflows.
+- Learn about [Collections and Collaboration](/guides/collaboration-sharing/creating-collaborative-collections) to manage shared collections.
+- Use the mobile app to capture links on the go: see [Mobile App Installation](/getting-started/requirements-installation/mobile-app-installation).
+
+---
+
+### Actionable Tips Summary
+- Start by adding links with URLs and collections.
+- Use tags and descriptions to enrich and contextualize.
+- Pin important links for quick dashboard access.
+- Organize regularly to avoid clutter.
+
+
+---
+
+For further troubleshooting with imports or link additions, refer to the [Troubleshooting & Common Issues](/getting-started/troubleshooting-faq/common-setup-issues) guide.
+
+
+---
+
+## Visual Workflow Diagram
+
+```mermaid
+flowchart TD
+  A[User Initiates Add Link] --> B{Link Type?}
+  B -->|URL| C[Input URL + Auto-fetch Title]
+  B -->|PDF/Image| D[Upload File or Specify Link Type]
+  C --> E[Select/Create Collection]
+  D --> E
+  E --> F[Add Tags and Description (Optional)]
+  F --> G[Submit Link]
+  G --> H{Duplicate Exists?}
+  H -->|Yes| I[Show Duplicate Warning]
+  H -->|No| J[Save Link in Database]
+  J --> K[Update UI & Indexes]
+  K --> L[Link Available in Library]
+```
+
+---
+
+This guides you through every stage from capturing a link to making it accessible and organized within your Linkwarden library.
+
+
+---
+
+For more advanced tasks like bulk import or automations, see the [Importing, Exporting, and Migrating Bookmarks](/guides/advanced-usage-integrations/import-export-migration) and [APIs, Access Tokens, and Automation](/guides/advanced-usage-integrations/api-automation) guides.
+
+
+<Note>
+Mastering link addition and organization is the foundation of your Linkwarden experience, enabling you to preserve knowledge efficiently and retrieve it effortlessly.
+</Note>
