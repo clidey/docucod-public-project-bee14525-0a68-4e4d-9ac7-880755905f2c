@@ -3,4 +3,221 @@ title: "Authentication & Access Issues"
 description: "Guidance on resolving problems signing in—resetting passwords, verifying emails, handling SSO errors, and checking permission settings for both web and mobile clients."
 ---
 
-*This page will automatically be generated from the codebase*
+# Authentication & Access Issues
+
+This guide provides clear, practical steps to help you resolve common problems related to signing in, password resets, email verification, handling Single Sign-On (SSO) errors, and managing permissions for both web and mobile clients of Linkwarden. Follow these instructions to quickly regain access and understand permission-related behaviors.
+
+---
+
+## 1. Understanding Sign-In Failures
+
+If you are unable to sign in to Linkwarden, it’s essential to identify the root cause. The system supports multiple authentication methods including username/password, email verification, and various Single Sign-On providers.
+
+### Common Reasons for Sign-In Failure
+
+- **Incorrect username or password:** Check for typos or case sensitivity.
+- **Unverified email address:** Your account requires verified email before allowing login.
+- **SSO registration restrictions:** New users signing up through SSO might be disabled by admin.
+- **Subscription or permission restrictions:** Active subscription and permissions are required.
+
+<Tip>
+If you see an "Invalid credentials" error, ensure you are entering the correct username or email and password. If you believe your credentials are correct, try resetting your password.
+</Tip>
+
+---
+
+## 2. Resetting Your Password
+
+If you cannot recall your password or suspect it is incorrect, follow these steps to reset it:
+
+1. Navigate to the Linkwarden login page (`/login`).
+2. Click the 'Forgot Password?' link.
+3. Enter the email associated with your account.
+4. Check your email inbox for the password reset link.
+5. Follow the link and create a new password.
+6. Return to the login page and sign in using your updated credentials.
+
+<Warning>
+Ensure your email address is verified before attempting password resets, as unverified emails can prevent the password reset process.
+</Warning>
+
+---
+
+## 3. Verifying Your Email Address
+
+If your email is not verified, signing in will fail for security reasons.
+
+### Steps to Confirm or Re-Verify Email:
+
+1. After registration or password reset, check your inbox for a verification email from Linkwarden.
+2. Click the verification link within 20 minutes (verification links expire).
+3. If you did not receive the email:
+   - Check your spam/junk folder.
+   - Request a new verification email from your account settings or during login.
+
+<Note>
+During sign-in, if you encounter an "Email not verified" error, you must complete email verification before proceeding.
+</Note>
+
+---
+
+## 4. Handling Single Sign-On (SSO) Errors
+
+Linkwarden supports various SSO providers such as Google, GitHub, Azure AD, and many others, configured by your administrator.
+
+### Troubleshooting SSO Sign-In Issues:
+
+- **New SSO users disabled:** Some deployments can prevent automatic registration of new SSO users.
+  - If you are a new user using SSO and cannot sign up, contact your administrator.
+
+- **Account linking problems:** If you already have an account but can't sign in with SSO, your provider account might not be linked.
+  - Reach out to admin support to assist with account linking.
+
+- **Expired or revoked tokens:** SSO tokens are time-limited.
+  - Sign out and try signing in again to refresh tokens.
+
+- **Missing permissions:** Your identity provider might not be supplying required profile fields.
+  - Verify with your identity provider administrator.
+
+<Tip>
+Administrators can enable or disable new SSO user registration and manage linked accounts from the admin dashboard.
+</Tip>
+
+---
+
+## 5. Checking Permission Settings
+
+Access to Linkwarden features depends on your user permissions and subscription status.
+
+### What to Check:
+
+- **Active subscription:** Without an active subscription, sign-in might be blocked.
+- **Verified email:** Required for all sign-in methods.
+- **Session validity:** Logged-in sessions expire or can be revoked by admins.
+
+### How to Verify Your Status:
+
+1. If you can sign in but encounter access errors, check your user profile/settings page.
+2. Contact your administrator for permission errors or subscription questions.
+
+<Tip>
+You can revoke active sessions or tokens from your account security settings to immediately regain control if you suspect unauthorized access.
+</Tip>
+
+---
+
+## 6. Common Troubleshooting Steps
+
+Follow this checklist to quickly solve authentication and access issues:
+
+- **Confirm your username or email is correct (case-insensitive).**
+- **Reset your password if necessary.**
+- **Verify your email address through the link sent upon signup.**
+- **Clear browser cache and cookies to remove corrupted sessions.**
+- **Try signing in from a different browser or device.**
+- **Check for any network restrictions or firewalls blocking authentication endpoints.**
+- **Contact your administrator if using SSO and registration or linking fails.**
+
+<Warning>
+Avoid repeated failed sign-in attempts which may temporarily lock your account for security reasons.
+</Warning>
+
+---
+
+## 7. Access Issues on Mobile Clients
+
+If you use the Linkwarden mobile app and encounter login or access problems:
+
+- Confirm your app is updated to the latest version.
+- Ensure your device has stable internet connectivity.
+- Logout and log back in to force a new session.
+- Verify that your backend server URL or cloud connection is correctly configured in app settings.
+- If SSO is enabled, use in-app browser or external browser login flows as instructed.
+
+<Tip>
+For mobile apps, cached sessions persist through app restarts; if experiencing persistent issues, clear app data or reinstall.
+</Tip>
+
+---
+
+## 8. When to Contact Support
+
+If none of the above steps restore access, collect the following information before contacting support:
+
+- The exact error message displayed.
+- Steps you took leading to the problem.
+- Whether you use username/password or SSO.
+- Device and browser/mobile app details.
+- Approximate time the issue occurred.
+
+Access support channels or community forums for personalized assistance.
+
+---
+
+## Appendix: Developer Notes on Authentication Flow
+
+For those interested in the system's behavior:
+
+- Credentials authentication is validated by the API endpoint `/api/v1/session`, which returns an error on invalid credentials or missing verification.
+
+- New users via SSO can be disabled via `DISABLE_NEW_SSO_USERS` environment variable.
+
+- Email verification protects users from unauthorized access.
+
+- Sessions are managed with long-lived JSON Web Tokens (JWT), which can be revoked or expire.
+
+- Token management API allows users to list, create, and revoke access tokens linked to sessions.
+
+
+---
+
+## Frequently Encountered Errors and Solutions
+
+<AccordionGroup title="Common Authentication Issues and How to Fix Them">
+<Accordion title="Invalid Credentials Error">
+**Symptoms:** Unable to log in with correct username/email and password.
+
+**Solution:**
+- Reset your password.
+- Confirm the username or email entered is correct and lowercased if typing manually.
+- Check if your email is verified.
+- If using SSO, ensure you are signing in with the correct SSO provider account.
+</Accordion>
+
+<Accordion title="Email Not Verified Error">
+**Symptoms:** Login attempts fail with a message indicating unverified email.
+
+**Solution:**
+- Check your email inbox, including spam, for the verification email.
+- Click the verification link promptly.
+- Request a new verification email from the login or account settings page.
+</Accordion>
+
+<Accordion title="New SSO Users Disabled">
+**Symptoms:** Unable to register or sign in using SSO for a new account.
+
+**Solution:**
+- Confirm with your admin if SSO registration has been disabled.
+- Admins can enable or manually add users for SSO.
+</Accordion>
+
+<Accordion title="Session Expired or Revoked">
+**Symptoms:** Suddenly logged out or prompted to sign in again.
+
+**Solution:**
+- Re-authenticate by signing in again.
+- Check if you have revoked any active sessions or tokens.
+- Contact admin if your access may have been revoked.
+</Accordion>
+
+<Accordion title="Access Denied or Permission Errors">
+**Symptoms:** Logged in but cannot perform certain actions.
+
+**Solution:**
+- Verify your subscription status.
+- Confirm your role and permissions with admin.
+- Review if your account is part of a team with restricted access.
+</Accordion>
+</AccordionGroup>
+
+---
