@@ -3,4 +3,100 @@ title: "Breaking Changes"
 description: "A concise and clear listing of breaking changes and backward-incompatible updates across major versions. This page explains which parts of the API or user experience will change, what is required from administrators or users, and links to specific migration or update instructions where necessary."
 ---
 
-*This page will automatically be generated from the codebase*
+# Breaking Changes in Linkwarden
+
+This page provides a clear, concise listing of breaking changes and backward-incompatible updates introduced across major versions of Linkwarden. It explains which parts of the user interface and workflows may behave differently, what administrators and users need to do to adapt, and points to detailed migration or upgrade instructions.
+
+---
+
+## Understanding Breaking Changes
+
+Linkwarden evolves continuously to deliver new features and improvements. Sometimes these changes may impact existing setups or workflows, requiring users or administrators to take action. Breaking changes typically include:
+
+- Changes to the API endpoints or request/response formats
+- Modifications of user interface flows or options
+- Updates to authentication methods or permissions models
+- Removal or deprecation of features
+
+This page helps you stay informed about such changes so you can plan upgrades smoothly and avoid disruptions.
+
+---
+
+## Recent Breaking Changes and Impact
+
+### Version 1.x to 2.0 Transition
+
+- **Authentication Flow Update:** Token-based sessions now require explicit refresh workflows. Users will need to reauthenticate after token expiry.
+- **API Endpoint Changes:** Some endpoints for user and collection management have changed paths or parameter requirements. Integration developers must update API calls accordingly.
+- **Collection Permissions Model Revised:** Roles and permissions granularity increased; existing collaborative collections may need permission review and adjustment.
+- **Dashboard Sections Behavior:** Dashboard customization layout changed. Users might need to reset or manually update their dashboard configurations.
+
+Detailed migration instructions and scripts are available under [Migration & Upgrade Guides](/changelog/breaking-changes/migration-guides).
+
+### Version 2.x to 3.0 Transition
+
+- **User Profile Privacy Enhancements:** Profiles can be marked private, changing discoverability. Administrators should inform users about new privacy options.
+- **API Token Management Overhaul:** Access tokens now include expiration policies and require explicit revocation, affecting automation workflows.
+- **Link Preservation Rules:** Introduced tag-based preservation overrides which modify archival behaviors. Users should review and update tag configurations.
+
+Please consult the [Breaking Changes Details](/changelog/breaking-changes/breaking-changes) for full technical specifics and remediation steps.
+
+---
+
+## How to Prepare and Migrate
+
+1. **Review Release Notes:** Always check any changelogs and breaking change notices before upgrading.
+2. **Backup Data:** Export your collections, links, and settings.
+3. **Test in Staging:** Deploy updates in a test environment to verify workflows.
+4. **Update Clients and Integrations:** Modify API calls, authentication scripts, and UI customizations as needed.
+5. **Inform Users:** Communicate major changes affecting user experience, especially around login and collaboration.
+6. **Follow Migration Guides:** Use official guides provided with each release for step-by-step upgrade paths.
+
+---
+
+## Common Breaking Change Scenarios
+
+<AccordionGroup title="Breaking Change Scenarios">
+<Accordion title="API Changes">
+Major API changes can cause failures in integrations or scripts. Typical required user actions include updating endpoint URLs, adjusting request parameters, or handling new authentication flows.
+</Accordion>
+<Accordion title="Authentication Updates">
+Changes to login flows or token handling may require users to reauthenticate or update saved credentials. Admins should monitor login issues post-upgrade and guide users to reset passwords or refresh tokens.
+</Accordion>
+<Accordion title="Permission Model Revisions">
+Updated roles and permissions might restrict access previously granted. Review team and collection permissions to ensure users retain appropriate access.
+</Accordion>
+<Accordion title="User Interface Modifications">
+Alterations to dashboard, menu options, or workflows may cause confusion. Providing updated user training or help documents can facilitate smooth transitions.
+</Accordion>
+</AccordionGroup>
+
+---
+
+## Troubleshooting and Support
+
+If you encounter issues after upgrading related to breaking changes:
+
+- Verify client versions and update as necessary.
+- Check for detailed error messages related to authentication or API usage.
+- Consult migration guides carefully for overlooked steps.
+- Review user permissions and collection settings after updates.
+- Contact Linkwarden support or community forums for assistance.
+
+For authentication-related problems, please see [Authentication & Access Issues](https://linkwarden.com/getting-started/troubleshooting-faq/authentication-issues).
+
+---
+
+## Additional Resources
+
+- [All Releases & Changelog](/changelog/release-history/all-releases): Complete list of Linkwarden releases.
+- [Migration & Upgrade Guides](/changelog/breaking-changes/migration-guides): Detailed step-by-step tutorials to help upgrade safely.
+- [User Management and Permissions](/guides/collaboration-sharing/user-management-permissions): Understand role changes.
+- [API Reference](/api-reference/core-workflows/authentication-authorization): For API changes and authentication details.
+- [Troubleshooting Common Setup Problems](/getting-started/troubleshooting-faq/common-setup-issues): General upgrade troubleshooting tips.
+
+---
+
+Stay informed of breaking changes to ensure your Linkwarden experience remains seamless, secure, and feature-rich.
+
+If you have feedback or need assistance, reach out to our support team or community channels.
