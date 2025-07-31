@@ -3,4 +3,356 @@ title: "User Accounts API"
 description: "Manage users and user preferences securely. Covers creating accounts, updating user data, managing preferences, and deleting users, supporting both self-managed and collaborative environments."
 ---
 
-*This page will automatically be generated from the codebase*
+# User Accounts API Reference
+
+Manage users and their preferences securely within Linkwarden's environment. Whether you are administrating self-managed users or supporting collaborative teams, the User Accounts API provides the essential operations to create, update, retrieve, and delete user accounts along with customizing user preferences.
+
+---
+
+## 1. Overview
+
+The User Accounts API enables programmatic access to user management capabilities. This includes:
+
+- Creating new user accounts
+- Retrieving user details and preferences
+- Updating user data or preference settings
+- Deleting user accounts securely
+
+This API is critical for system administrators, automation scripts, and integrations requiring user lifecycle management.
+
+**Base URL:**
+```
+https://<your-linkwarden-domain>/api/users
+```
+
+**Authentication:**
+All endpoints require authentication via valid API tokens or session tokens with appropriate scopes.
+
+**Content Types:**
+- Requests: `application/json`
+- Responses: `application/json`
+
+**Rate Limiting:**
+API usage follows the general rate limiting policies defined in the system.
+
+
+## 2. Authentication and Authorization
+
+Users must be authenticated and authorized to perform all operations on the User Accounts API. Typically:
+
+- **API Tokens** with scopes such as `users:read`, `users:write` are required.
+- Changing sensitive data (e.g., passwords, email) requires elevated permissions.
+
+Errors related to authentication or authorization respond with standard HTTP 401 or 403 status codes.
+
+## 3. Endpoints
+
+### 3.1 Create User Account
+
+- **POST /api/users**
+
+Creates a new user with specified details.
+
+#### Request Body
+
+| Field            | Type    | Required | Description                        |
+|------------------|---------|----------|----------------------------------|
+| username         | string  | Yes      | Unique username (3+ chars, no spaces or special chars) |
+| email            | string  | Yes      | Valid user email address          |
+| password         | string  | Yes      | Password (minimum 8 characters)  |
+| display_name     | string  | Optional | Nickname or display name          |
+| subscribed       | boolean | Optional | Subscription status               |
+
+#### Example Request
+```json
+{
+  "username": "john_doe",
+  "email": "john.doe@example.com",
+  "password": "Str0ngPass!",
+  "display_name": "John",
+  "subscribed": false
+}
+```
+
+#### Successful Response
+- **201 Created**
+- Body includes user ID and summary information
+
+```json
+{
+  "id": "12345",
+  "username": "john_doe",
+  "email": "john.doe@example.com",
+  "display_name": "John",
+  "created_at": "2024-06-15T12:34:56Z"
+}
+```
+
+#### Errors
+- **400 Bad Request** - Missing or invalid fields
+- **409 Conflict** - Username or email already exists
+
+
+### 3.2 Retrieve User Details
+
+- **GET /api/users/{userId}**
+
+Fetch details of an existing user.
+
+#### Path Parameter
+
+| Parameter | Type   | Description       |
+|-----------|--------|-------------------|
+| userId    | string | Unique user's ID   |
+
+#### Example Request
+```
+GET /api/users/12345
+Authorization: Bearer <token>
+```
+
+#### Successful Response
+- **200 OK**
+
+```json
+{
+  "id": "12345",
+  "username": "john_doe",
+  "email": "john.doe@example.com",
+  "display_name": "John",
+  "subscribed": false,
+  "created_at": "2024-06-15T12:34:56Z",
+  "preferences": {
+    "language": "en-US",
+    "profile_private": false,
+    "whitelisted_users": ["alice", "bob"]
+  }
+}
+```
+
+#### Errors
+- **404 Not Found** - User ID does not exist
+
+
+### 3.3 Update User Account
+
+- **PATCH /api/users/{userId}**
+
+Update user information or preferences partially.
+
+#### Request Body
+
+Accepts one or more of the following fields:
+
+| Field            | Type      | Description                         |
+|------------------|-----------|-----------------------------------|
+| email            | string    | Update email address               |
+| password         | string    | New password (min 8 characters)   |
+| display_name     | string    | Change display name                |
+| subscribed       | boolean   | Change subscription status        |
+| preferences      | object    | Update user preference settings   |
+
+Example preferences:
+
+```json
+{
+  "language": "fr-FR",
+  "profile_private": true,
+  "whitelisted_users": ["alice", "charlie"]
+}
+```
+
+#### Example Request
+```json
+{
+  "display_name": "Johnny",
+  "preferences": {
+    "language": "zh",
+    "profile_private": true
+  }
+}
+```
+
+#### Successful Response
+- **200 OK**
+- Response includes updated user data
+
+```json
+{
+  "id": "12345",
+  "display_name": "Johnny",
+  "preferences": {
+    "language": "zh",
+    "profile_private": true
+  }
+}
+```
+
+#### Errors
+- **400 Bad Request** - Invalid field values
+- **404 Not Found** - User does not exist
+- **403 Forbidden** - Insufficient permissions
+
+
+### 3.4 Delete User Account
+
+- **DELETE /api/users/{userId}**
+
+Permanently deletes the user account along with owned data.
+
+#### Path Parameter
+
+| Parameter | Type   | Description       |
+|-----------|--------|-------------------|
+| userId    | string | Unique user's ID   |
+
+#### Example Request
+```
+DELETE /api/users/12345
+Authorization: Bearer <token>
+```
+
+#### Successful Response
+- **204 No Content**
+
+Indicates successful deletion.
+
+#### Errors
+- **404 Not Found** - User does not exist
+- **403 Forbidden** - Insufficient permissions
+
+
+### 3.5 List Users
+
+- **GET /api/users**
+
+Retrieve paginated list of users with optional search and filters.
+
+#### Query Parameters
+
+| Parameter | Type   | Description                         |
+|-----------|--------|-----------------------------------|
+| search    | string | Search by username or email       |
+| subscribed| boolean| Filter by subscription status     |
+| limit     | int    | Max number of results (default 25) |
+| offset    | int    | Pagination offset                 |
+
+#### Example Request
+```
+GET /api/users?search=john&subscribed=true&limit=10
+```
+
+#### Successful Response
+- **200 OK**
+
+```json
+{
+  "count": 1,
+  "offset": 0,
+  "limit": 10,
+  "users": [
+    {
+      "id": "12345",
+      "username": "john_doe",
+      "email": "john.doe@example.com",
+      "subscribed": true,
+      "created_at": "2024-06-15T12:34:56Z"
+    }
+  ]
+}
+```
+
+#### Errors
+- **400 Bad Request** - Invalid query parameters
+
+
+## 4. Data Models
+
+### User Object
+
+| Field           | Type        | Description                                   |
+|-----------------|-------------|-----------------------------------------------|
+| id              | string (UUID)| Unique user ID                                |
+| username        | string      | Unique username (minimum 3 characters)        |
+| email           | string      | Email address                                 |
+| display_name    | string      | Optional display name                          |
+| subscribed      | boolean     | Subscription status                            |
+| created_at      | string (ISO 8601)| Account creation timestamp                |
+| preferences     | object      | User-specific settings (language, privacy, whitelist) |
+
+
+### Preferences Object
+
+| Field             | Type           | Description                                   |
+|-------------------|----------------|-----------------------------------------------|
+| language          | string         | Preferred UI language (e.g., 'en-US', 'fr-FR') |
+| profile_private   | boolean        | Whether profile is private (limits search/visibility) |
+| whitelisted_users | array of string| Usernames allowed to view a private profile   |
+
+
+## 5. Examples
+
+### Creating a User with Preferences
+
+```http
+POST /api/users
+Content-Type: application/json
+Authorization: Bearer <api_token>
+
+{
+  "username": "janedoe",
+  "email": "jane@example.com",
+  "password": "SafePass123",
+  "display_name": "Jane",
+  "subscribed": true
+}
+```
+
+### Updating User Preferences
+
+```http
+PATCH /api/users/12345
+Content-Type: application/json
+Authorization: Bearer <api_token>
+
+{
+  "preferences": {
+    "language": "de",
+    "profile_private": true,
+    "whitelisted_users": ["johnsmith"]
+  }
+}
+```
+
+### Searching for Users
+
+```http
+GET /api/users?search=john&limit=5
+Authorization: Bearer <api_token>
+```
+
+
+## 6. Best Practices
+
+- **Validate inputs:** Enforce username, email, and password rules to avoid errors.
+- **Use least privilege tokens:** Only grant necessary scopes when generating API tokens.
+- **Manage sensitive data carefully:** Passwords should never be returned in responses.
+- **Handle errors gracefully:** Check for 4xx and 5xx responses to handle problems programmatically.
+
+## 7. Troubleshooting
+
+- **User creation fails with 409 Conflict:** Check if username or email is already in use.
+- **Unauthorized errors:** Verify token scopes and expiration.
+- **User not found:** Confirm `userId` is correct and user exists.
+- **Invalid input errors:** Re-examine field constraints such as password length and username format.
+
+## 8. Related Resources
+
+- [Authentication & Authorization API Reference](https://linkwarden.com/api-reference/core-workflows/authentication-authorization)
+- [User Management and Permissions Guide](https://linkwarden.com/guides/collaboration-sharing/user-management-permissions)
+- [API Tokens and Security Best Practices](https://linkwarden.com/security/auth-and-access/api-access-tokens)
+- [Account Setup and First Login](https://linkwarden.com/getting-started/configuration-initial-setup/account-setup-login)
+
+---
+
+This reference equips you to seamlessly integrate user account management into your automation, administration, or custom client applications, empowering you to securely control your Linkwarden user base and preferences.
