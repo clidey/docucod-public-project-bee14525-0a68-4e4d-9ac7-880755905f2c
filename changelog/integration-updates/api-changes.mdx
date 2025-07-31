@@ -3,4 +3,129 @@ title: "API & Integration Changes"
 description: "A focused listing of changes to Linkwarden’s public API endpoints, authentication flows, and external integration touchpoints. This page helps integrators and developers adapt automation, scripts, or third-party tools as the platform evolves."
 ---
 
-*This page will automatically be generated from the codebase*
+# API & Integration Changes
+
+This page provides a centralized and focused overview of changes made to Linkwarden's public API endpoints, authentication flows, and external integration points. It is designed specifically for integrators and developers who need to adapt their automation scripts, third-party tools, or custom workflows in response to platform evolution. Understanding these updates enables seamless integration with Linkwarden while maintaining automation reliability and security.
+
+---
+
+## 1. Overview of API & Integration Changes
+
+Integrations are critical for leveraging Linkwarden's features beyond the web interface—allowing users to automate bookmarks management, synchronize data, and connect with external services effortlessly. This documentation highlights modifications affecting these touchpoints, focusing on:
+
+- Changes to API routes, request/response formats, and authentication methods
+- Updates to token and session handling flows
+- Adaptations in supported external authentication providers and SSO mechanisms
+- Impacts on integration endpoints such as migration, tagging, and error handling
+
+By concentrating on user impact and adapted workflows, this page enables developers to maintain uninterrupted automated environments.
+
+---
+
+## 2. Key API Endpoint Updates
+
+### Authentication Flows
+
+- **Credential Login Updates:** The platform continues to support username/email and password-based login with enhancements to error messages and protection against repeated failed attempts. Password verification and email verification processes have been refined to ensure security and account integrity.
+
+- **Single Sign-On (SSO) & OAuth Providers:** Linkwarden expanded and standardized integration with a broad range of OAuth2 providers, including enterprise-grade identity services. New providers are enabled conditionally via environment variables, offering wide flexibility for enterprise and educational institutions.
+
+- **Email Magic Links & Invitation Flow:** Enhancements include rate limiting on verification requests to prevent abuse and handling invitation flows linked to subscription seats for parental accounts.
+
+- **Session Management:** JWT-based session tokens are used with a 30-day lifespan. Session refresh and validation now include subscription eligibility checks for billing compliance.
+
+### Tags API
+
+- Support for updating and deleting tags via `PUT` and `DELETE` requests remains, with validation to ensure tag integrity and applicability only to authorized users.
+
+### Migration API
+
+- The migration endpoint now supports importing and exporting bookmarks in multiple formats such as Linkwarden JSON, browser HTML files, Wallabag, Omnivore, and Pocket, ensuring cross-platform transition support.
+
+- Request size limits are configurable via environment variables to accommodate large imports.
+
+### User Preferences and Accounts
+
+- Endpoints for updating user preferences and managing accounts now enforce strict permission checks, preventing unauthorized access.
+
+- Subscription verification hooks have been embedded into user session and account management to prevent usage without active subscriptions.
+
+---
+
+## 3. Authentication Provider Enhancements
+
+Linkwarden now conditionally enables an extensive list of OAuth2 providers based on environment configuration. This modularity allows organizations to activate only the integrations they require, including but not limited to:
+
+- Major providers like Google, GitHub, Microsoft Azure AD, Auth0
+- Specialized enterprise or community providers such as Atlassian, Keycloak, FusionAuth, Okta
+- Social platforms including Discord, Facebook, Twitch, Reddit
+- Education-focused SSO providers like 42 School
+
+Each provider configuration includes secure handling of tokens and sensitive data, with improved account linking to unify user identities across multiple authentication methods.
+
+---
+
+## 4. Impact on Integrations and Automation
+
+Users relying on API integrations should consider these changes to ensure continued functionality:
+
+- Verify that your API tokens or session credentials remain valid post-update, especially if session lifetimes or refresh protocols were adjusted.
+
+- Adapt to any updated request or response schema changes detailed in provider-specific API references.
+
+- Confirm OAuth client credentials and scopes are up to date if using third-party authentication providers, as these vary per provider and version.
+
+- For migration imports, confirm your import payload respects the configured maximum request size (`IMPORT_LIMIT`) to avoid failures.
+
+- Review error handling workflows in your client to adapt to enhanced status messaging and rate limiting responses.
+
+<Tip>
+Remember to monitor changelog and migration guides regularly to anticipate breaking changes or deprecations affecting your integrations.
+</Tip>
+
+---
+
+## 5. Practical Tips for Integrators
+
+- **Testing Authentication:** Use sandbox or staging environments with configured test OAuth providers to validate login and session flows before deploying changes to production.
+
+- **Token Security:** Always store API tokens securely and rotate them periodically, following the [API Access Tokens guide](https://linkwarden.com/security/auth-and-access/api-access-tokens).
+
+- **Error Resilience:** Implement retry strategies and backoff algorithms to handle rate limiting gracefully, informed by [Error Handling & Status Codes](https://linkwarden.com/api-reference/api-usage-guides/error-handling-status-codes).
+
+- **Update Dependencies:** Ensure any SDKs or client libraries you use are updated to align with authentication provider adjustments and API schema changes.
+
+- **Keep Environment Variables Synced:** For OAuth provider activations, confirm that environment variables in your deployment reflect necessary configurations to enable providers properly.
+
+---
+
+## 6. Troubleshooting Common Issues
+
+<AccordionGroup title="Common Problems When Integrating or Upgrading">
+<Accordion title="Failed Authentication or Session Expiry">
+Check your credentials against updated validation flows. Ensure email verification is complete for accounts requiring verified emails. Confirm SSO users are allowed if new SSO user registration has been disabled.
+</Accordion>
+<Accordion title="API Request Limit Exceeded or Rate-Limited">
+Respect API rate limit headers and implement exponential backoff or retry-after delays. Bulk migration may require splitting files or increasing `IMPORT_LIMIT` in your environment.
+</Accordion>
+<Accordion title="OAuth Provider Configuration Errors">
+Double-check client IDs, secrets, and issuer URLs in environment variables. Confirm scope parameters meet provider requirements. Consult logs for unhandled token fields.
+</Accordion>
+<Accordion title="Permission Denied on Updating User Data or Tags">
+Verify that your API user has the right permissions and is not blocked by demo mode restrictions. Check user identity matches request targets.
+</Accordion>
+</AccordionGroup>
+
+---
+
+## 7. References and Further Reading
+
+- [Authentication Methods](https://linkwarden.com/security/auth-and-access/authentication-methods) - Detailed flows of supported auth methods including SSO
+- [API Access Tokens](https://linkwarden.com/security/auth-and-access/api-access-tokens) - How to create and manage tokens for API access
+- [Error Handling & Status Codes](https://linkwarden.com/api-reference/api-usage-guides/error-handling-status-codes) - Helps interpret API responses
+- [Migration & Upgrade Guides](https://linkwarden.com/changelog/breaking-changes/migration-guides) - Guidance for smooth version transitions
+- [API Usage Guides: SDK Examples](https://linkwarden.com/api-reference/api-usage-guides/sdk-examples-and-snippets) - Practical code snippets
+
+---
+
+By leveraging this changelog for API and integration updates, developers will maintain critical workflows uninterrupted and fully leverage Linkwarden’s evolving platform capabilities.
