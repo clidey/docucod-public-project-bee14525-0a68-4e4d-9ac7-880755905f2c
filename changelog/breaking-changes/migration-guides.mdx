@@ -3,4 +3,205 @@ title: "Migration & Upgrade Guides"
 description: "Step-by-step instructions and recommendations for upgrading Linkwarden across versions, including data migrations, configuration updates, and environment prerequisites. This page supports both cloud and self-hosted users to transition confidently with minimal disruption."
 ---
 
-*This page will automatically be generated from the codebase*
+# Migration & Upgrade Guides
+
+Welcome to the Migration & Upgrade Guides page for Linkwarden—the central resource designed to help both cloud and self-hosted users upgrade their installations smoothly and confidently. Here you will find clear, step-by-step instructions, best practices, and valuable recommendations to handle data migrations, configuration updates, and environment prerequisites required for transitioning between different versions of Linkwarden with minimal disruption.
+
+---
+
+## Why This Page Matters
+
+Upgrading Linkwarden is a critical process that ensures you stay current with the latest features, security patches, and performance improvements. This page supports you in planning and performing upgrades safely, whether you run Linkwarden in the cloud or on your own infrastructure. By following these guides, you preserve your bookmark data and collections, maintain operational continuity, and leverage new capabilities as soon as they become available.
+
+---
+
+## Key Topics Covered
+
+### 1. Preparing for an Upgrade
+
+Before starting an upgrade, confirm your environment meets the necessary prerequisites:
+
+- **Environment Checks:** Verify your database and storage configurations conform to the new version's requirements.
+- **Backup Your Data:** Always export your bookmarks and collections using Linkwarden's export feature to create a safe restore point.
+- **Review Release Notes:** Consult the related changelog pages for breaking changes and migration notices that affect your current version.
+
+
+### 2. Migration Paths for Different Deployment Types
+
+Whether you use the cloud service or a self-hosted setup, this guide provides tailored instructions:
+
+- **Cloud Users:** Generally benefit from seamless, managed upgrades but should verify data sync status and review feature toggles.
+- **Self-Hosted Users:** Need to review environment variables, update backend services, apply database migrations, and verify storage access as described in the environment configuration guides.
+
+
+### 3. Data Migration Methods
+
+Linkwarden supports multiple import formats and migration workflows, enabling you to transition from older versions or external bookmark services. Supported migrations include:
+
+- **Native Linkwarden Backups:** Import and export collections and links in Linkwarden’s JSON backup format.
+- **HTML Bookmarks Files:** Import standard browser-exported bookmarks.
+- **Third-Party Services:** Seamlessly import data from Wallabag, Pocket, Omnivore, and others.
+
+These options are accessible via the import UI and backed by robust server-side processes that validate links, create necessary collections, and handle tags and annotations.
+
+### 4. Step-by-Step Migration Workflow (Example for Self-Hosted Users)
+
+<Steps>
+<Step title="Export Existing Data">
+Export your current bookmarks and collections via the Linkwarden export functionality (accessible under settings). Save the backup file securely.
+</Step>
+<Step title="Backup Your Database and Storage">
+Create a full backup of your Linkwarden database and any archived files stored locally or in your cloud storage.
+</Step>
+<Step title="Verify Environment Prerequisites">
+Confirm all environment variables and dependencies align with the new version's requirements (see Environment Configuration documentation).
+</Step>
+<Step title="Apply Updates">
+Pull the latest release, update your backend and frontend services, and run database migrations.
+</Step>
+<Step title="Import Data (If Needed)">
+If migrating from another service or recovering from backup, use the import feature to upload your saved data in JSON, HTML, CSV, or ZIP formats.
+</Step>
+<Step title="Validate">
+Log into your Linkwarden instance and verify that all links, collections, tags, and annotations are intact and functional.
+</Step>
+</Steps>
+
+
+### 5. Import and Export Formats Supported
+
+Linkwarden's migration API supports the following formats:
+
+- **Linkwarden JSON:** Full backup including collections, links, tags, and pinned links.
+- **HTML Bookmarks:** Standard browser export bookmarks with nested folders.
+- **Pocket CSV:** User export from Pocket including tags and timestamps.
+- **Wallabag JSON:** Import from Wallabag archives, including starred and tagged items.
+- **Omnivore Zip:** A zipped export of articles with metadata for import.
+
+Each format handles link validation, tag associations, collection creation, and import date mappings to preserve your organizational structure.
+
+
+### 6. Common Migration Scenarios
+
+- **Migrating between Linkwarden Versions:** Utilize native JSON exports and imports to transition with collection and tag fidelity.
+- **Transitioning from External Bookmark Managers:** Use specific import tools for services like Pocket or Wallabag to bring your saved links into Linkwarden effortlessly.
+- **Bulk Import via HTML:** Ideal for browser users exporting bookmarks for quick ingestion.
+
+
+### 7. Troubleshooting Migration Issues
+
+- **Subscription Limits:** Users with link limits may encounter errors on import exceeding allowed quotas. Verify your plan capacity before bulk migration.
+- **Import Failures:** Errors in upload or malformed files result in clear user-facing messages. Ensure file formats and sizes conform to limits.
+- **Link Validation:** Invalid URLs are skipped silently; review your source data if expected links are missing.
+- **Import Timeouts:** For large imports, allow ample server processing time or split import files into manageable chunks.
+
+
+### 8. Best Practices for Upgrading
+
+- Perform upgrades during low-usage windows to minimize user impact.
+- Validate backups before and after migration steps.
+- Incrementally test imports with smaller data sets when possible.
+- Follow official changelogs and breaking change notices to adjust workflows accordingly.
+
+
+---
+
+## Additional Resources
+
+- [Environment Configuration Guide](https://linkwarden.com/deployment/getting-started-deployment/environment-configuration) — Set up and verify backend environment variables.
+- [Importing, Exporting, and Migrating Bookmarks Guide](https://linkwarden.com/guides/advanced-usage-integrations/import-export-migration) — Detailed walkthrough of data migration options.
+- [All Releases & Changelog](https://linkwarden.com/changelog/release-history/all-releases) — Stay up to date with new versions and breaking changes.
+- [Troubleshooting Common Setup Problems](https://linkwarden.com/getting-started/troubleshooting-faq/common-setup-issues) — Fast solutions for upgrade-related issues.
+
+---
+
+## Summary of Supported Migration APIs
+
+The Linkwarden backend provides API endpoints that serve as the core of migration/import/export functionalities.
+
+- **Export Data:** Retrieves a full user backup in JSON.
+- **Import Endpoints:** Accept JSON, HTML, CSV, or ZIP files in multiple recognized formats.
+
+The import processing includes link validation, collection and tag management, and handling pinned links. Each import runs inside a database transaction to ensure consistency.
+
+---
+
+## Illustrative Example: Import from HTML Bookmark File
+
+Below is a simplified user flow supported by the import mechanism when uploading an HTML bookmark export:
+
+1. User uploads a standard browser-generated `.html` file.
+2. Linkwarden parses the file, extracting collections (folders) and links.
+3. Nested folders are recreated as collections, preserving structure.
+4. Links are added under their respective collections with any included tags and descriptions.
+5. User is notified on completion and prompted to reload their page to see imported content.
+
+This practical approach is mirrored for other supported import formats, each adapted to their unique data structures.
+
+---
+
+## Troubleshooting Importing Large Datasets
+
+If a bulk import stalls or fails:
+
+- Check that your subscription or plan allows for the number of links you are importing.
+- Ensure your import files are well-formed; tools like JSON validators or CSV parsers help confirm.
+- Importing via smaller batches can reduce server load and avoid timeouts.
+- Review server logs if you control the backend to diagnose potential database transaction timeouts or file system errors.
+
+---
+
+## Final Tips
+
+- Always test migration processes on a non-production environment if possible.
+- Keep your Linkwarden instance updated regularly using the release notes and migration guides.
+- Engage community forums or support channels early if you face unusual migration issues.
+
+Your journey to an upgraded, optimized Linkwarden experience begins here. Follow these guides closely to unlock the full power of Linkwarden’s continuous improvements.
+
+---
+
+For more details on importing bookmarks from specific third-party sources like Wallabag or Pocket, or managing collection structures during migration, refer to the import controller documentation and client import utilities.
+
+<AccordionGroup title="Import Formats and Supported Services">
+<Accordion title="Linkwarden Native JSON Backup">
+Import and export your entire Linkwarden data set including collections, links, tags, and pinned items with high fidelity.
+</Accordion>
+<Accordion title="HTML Bookmark Files">
+Upload standard browser-exported bookmarks; the importer recreates folder hierarchy and bookmarks with optional tags.
+</Accordion>
+<Accordion title="Pocket CSV Import">
+Bring in your saved items from Pocket with tag parsing and timestamps.
+</Accordion>
+<Accordion title="Wallabag JSON Import">
+Import your Wallabag archive with starred and tagged items organized under a dedicated collection.
+</Accordion>
+<Accordion title="Omnivore ZIP Import">
+Process compressed metadata and articles from Omnivore, creating collections and links from article data.
+</Accordion>
+</AccordionGroup>
+
+<Tip>
+Before any major migration, export your current data and verify backups for safe restoration.
+</Tip>
+<Warning>
+Large imports may hit limits on links per subscription; verify your plan or break uploads into smaller parts.
+</Warning>
+
+---
+
+## How This Page Fits Into Linkwarden Documentation
+
+This page complements the broader [Importing, Exporting, and Migrating Bookmarks](https://linkwarden.com/guides/advanced-usage-integrations/import-export-migration) guide by focusing exclusively on the upgrade and migration journey.
+
+It connects with:
+
+- Environment Configuration guides for setting up required prerequisites.
+- The Changelog and Breaking Changes pages to align with version upgrades.
+- API Reference pages that expose migration APIs for automation use.
+
+Together, these resources empower users to maintain the integrity and continuity of their Linkwarden experience through smooth upgrades.
+
+---
+
+Thank you for trusting Linkwarden. Your data’s journey to the latest and greatest is just a few steps away.
