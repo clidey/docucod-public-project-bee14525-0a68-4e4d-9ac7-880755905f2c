@@ -3,4 +3,132 @@ title: "Deprecation Notices"
 description: "A timely log of deprecated features, APIs, or configuration patterns, including removal timelines and suggested alternatives. This helps users prepare in advance for necessary changes and ensures their usage remains future-proof."
 ---
 
-*This page will automatically be generated from the codebase*
+# Deprecation Notices
+
+This page delivers a clear, actionable record of all deprecated features, APIs, and configuration patterns within Linkwarden. It provides users with critical timelines for removals and recommended alternatives, ensuring a smooth transition away from deprecated elements and maintaining the stability and future-proofing of your Linkwarden deployments.
+
+---
+
+## Why Deprecation Notices Matter
+
+Staying informed about deprecations prevents unexpected disruptions by giving you ample time to adjust your workflows, update integrations, or modify configurations. This page helps you proactively address changes before they impact your experience.
+
+A well-managed upgrade journey enhances your confidence in Linkwarden’s commitment to continuous improvement without surprises.
+
+---
+
+## Understanding the Deprecation Lifecycle
+
+Deprecation is the first formal step in retiring a feature. It is announced publicly, followed by a timeline during which the deprecated feature remains functional but unsupported, culminating in its removal. 
+
+**What to expect:**
+
+- An official announcement outlining what is deprecated
+- Clear timelines indicating when support ends and removals occur
+- Suggested alternatives or migration strategies
+
+Always prioritize checking this page before upgrading versions or changing configurations.
+
+---
+
+## Current Deprecations and Timelines
+
+### 1. Deprecated APIs and Features
+
+#### Legacy Collection Endpoints
+- **Deprecated since:** v2.3.0
+- **Removal planned:** v3.0.0 (approx. 6 months from initial deprecation)
+- **Impact:** The legacy collection API endpoints will no longer function post-removal.
+- **Recommended action:** Transition to the new Collections API as documented in the [Collections API guide](/api-reference/core-workflows/collections-api).
+
+#### Configuration Pattern 'EXPO_USE_COMMUNITY_AUTOLINKING'
+- **Deprecated since:** v2.7.1
+- **Removal planned:** v2.9.0
+- **Context:** The environment variable controlling Expo community autolinking on Android ([see mobile/android/settings.gradle]) is being retired for streamlined autolinking management.
+- **Recommended action:** Remove usage of this variable and adopt the default autolinking as per updated expo and react-native integration instructions.
+
+### 2. SDK and Dependency Version Changes
+
+Certain dependencies such as Hermes Engine and React Native submodules have aligned to newer versions requiring client updates:
+
+- Hermes Engine upgrade to `0.76.9` introduces compatibility changes.
+- React Native core modules at `0.76.9` require corresponding SDK updates.
+
+Users should review changelogs prioritized in the broader Changelog sections and migration guides to ensure updated dependencies do not break existing functionality.
+
+### 3. Configuration Files and Compiler Options
+
+- Deprecation of older TypeScript compiler targets (e.g., `es5`) in favor of modern targets like `es2022` to align with evolving JavaScript standards.
+- Files such as `apps/web/tsconfig.json` and `apps/worker/tsconfig.json` showcase updated configurations.
+
+Please verify your local configs and update as recommended.
+
+---
+
+## Recommended Migration Paths
+
+We strongly recommend following these steps to mitigate issues arising from deprecations:
+
+1. **Audit your current usage:** Identify any deprecated features or APIs in your existing workflows and codebase.
+2. **Consult migration guides:** See [Migration & Upgrade Guides](/changelog/breaking-changes/migration-guides) for detailed, step-by-step help.
+3. **Test in staging:** Implement recommended alternatives in a controlled environment before applying to production.
+4. **Update dependencies:** Align all related SDK and native dependencies as per release notes.
+5. **Remove deprecated configs:** Clean up environment variables and config files according to the latest standards.
+
+
+<Tip>
+Act early and stay informed. Regularly visiting this page and subscribing to changelog updates is the best way to stay ahead of changes and ensure seamless experience.
+</Tip>
+
+---
+
+## Troubleshooting Common Issues Related to Deprecation
+
+- **Unexpected failures after upgrade:** Ensure all deprecated APIs are removed from your integrations and replaced with new endpoints.
+- **Mobile build errors related to autolinking:** Confirm that the environment variable `EXPO_USE_COMMUNITY_AUTOLINKING` is no longer set if targeting newer SDK versions.
+- **TypeScript errors about target incompatibilities:** Adjust your `tsconfig.json` files to use supported `compilerOptions.target` settings, such as `es2022`.
+
+If issues persist, consult the [Troubleshooting Common Setup Problems guide](/getting-started/troubleshooting-faq/common-setup-issues) or reach out through official support channels.
+
+---
+
+## Staying Up to Date
+
+To ensure continuous compatibility, also monitor:
+
+- [All Releases & Changelog](/changelog/release-history/all-releases) for latest version details
+- [Breaking Changes](/changelog/breaking-changes/breaking-changes) for impactful updates
+- [Migration & Upgrade Guides](/changelog/breaking-changes/migration-guides) for actionable instructions
+
+
+---
+
+## Summary
+
+This page is your go-to resource for tracking deprecated features and preparing your environment accordingly to prevent disruptions. By following the timelines and adopting suggested alternatives early, you ensure your Linkwarden environment remains secure, stable, and future-ready.
+
+---
+
+## Additional Resources
+
+- [Collections API](https://linkwarden.com/api-reference/core-workflows/collections-api)
+- [Migration & Upgrade Guides](https://linkwarden.com/changelog/breaking-changes/migration-guides)
+- [Troubleshooting Common Setup Problems](https://linkwarden.com/getting-started/troubleshooting-faq/common-setup-issues)
+- [All Releases & Changelog](https://linkwarden.com/changelog/release-history/all-releases)
+
+
+---
+
+
+## How This Page Fits into Documentation
+
+Deprecation Notices work as a critical part of the changelog ecosystem, complementing broader Release History and Migration Guides. They provide early signals about upcoming removals keyed directly to user impact, enabling you to plan upgrades smoothly.
+
+For comprehensive guidance, users should navigate between this page and migration instructions, troubleshooting support, and core API documentation.
+
+
+---
+
+_Last updated: Current version date_
+
+---
