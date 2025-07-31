@@ -3,4 +3,179 @@ title: "Data Encryption & Storage Security"
 description: "Understand how user credentials, saved links, archived content (screenshots, PDFs), and other data are protected at rest and in transit. This page highlights secure storage practices, optional S3 integration, and file security for preserved content."
 ---
 
-*This page will automatically be generated from the codebase*
+# Data Encryption & Storage Security
+
+Ensuring the safety of your personal data — including user credentials, saved links, and archived content such as screenshots and PDFs — is a foundational pillar of Linkwarden’s security posture. This page guides you through how Linkwarden protects your data both while stored (‘at rest’) and during transmission (‘in transit’), highlights secure storage management practices, and covers options like AWS S3 integration for enhanced file security.
+
+---
+
+## 1. Protecting Data at Rest and in Transit
+
+Your data is valuable, and Linkwarden guards it with strong safeguards at every stage:
+
+- **Encryption in Transit:** All communication between clients and the Linkwarden backend uses HTTPS/TLS protocols. This protects credentials, bookmarks, and archived files from interception or tampering when data moves across the network.
+
+- **Secure Storage:** Whether stored locally on your server or in an integrated cloud storage service such as an S3-compatible solution, all user-related files and data are safeguarded with strict access controls and folder structures.
+
+- **Data Segregation:** Archived files like PDFs and images are organized by collections and links, ensuring that files are logically isolated and easier to manage securely.
+
+
+## 2. File and Folder Storage Architecture
+
+Linkwarden’s backend handles file storage flexibly:
+
+- **Local Storage:** By default, files are saved within a designated data directory on the server filesystem (environment variable `STORAGE_FOLDER`, defaulting to `data`). Data is organized under well-defined folder paths such as `archives/{collectionId}/{linkId}.pdf`.
+
+- **S3-Compatible Integration:** When configured, Linkwarden uses an S3 client to interact with a cloud storage bucket (e.g., DigitalOcean Spaces). This setup offloads file storage, offering benefits like redundancy, scalability, and managed security.
+
+
+### How Folder Creation Works
+
+For local setups, Linkwarden creates nested directories as needed when saving files, ensuring the proper path hierarchy without manual intervention. In S3 mode, folder creation is implicitly handled by the cloud storage provider.
+
+Example from source code:
+
+```typescript
+// Local folder creation (recursive)
+fs.mkdirSync(creationPath, { recursive: true });
+// In S3 mode, directories are managed by S3 itself
+```
+
+
+## 3. File Operations with Security in Mind
+
+Linkwarden provides reliable file operations implemented carefully to minimize risk:
+
+- **File Creation:** Files such as archived PDFs, images, and JSON metadata are created atomically, with base64 or binary data handled appropriately to prevent corruption.
+
+- **Reading Files:** When accessing archived data, the system confirms file existence and content type. For missing files, user-friendly fallback messages are served to protect internal details.
+
+- **Removing and Moving Files:** Files and folders can be safely removed or moved, with comprehensive handling for both local and S3-backed storage. Recursive deletion operations handle nested archives, preventing orphaned data.
+
+
+### Example: Removing Files From Archives
+
+```typescript
+await removeFile({ filePath: `archives/${collectionId}/${linkId}.pdf` });
+await removeFile({ filePath: `archives/${collectionId}/${linkId}.png` });
+// ...other file types
+```
+
+
+## 4. Optional S3 Integration for Enhanced Security
+
+For deployments wishing to leverage cloud-based storage, Linkwarden supports full integration with any S3-compatible service through environment configuration. This approach offers:
+
+- **Managed Infrastructure Security:** Storage providers typically offer built-in encryption at rest, audit logs, and granular access policies.
+
+- **Scalable and Durable Storage:** Your archived content benefits from data replication and fault tolerance inherent in cloud platforms.
+
+- **Streamlined Backup and Recovery:** Cloud storage simplifies disaster recovery with snapshot and versioning features (if enabled).
+
+### Configuring S3 Storage
+
+Set environment variables such as:
+
+- `SPACES_ENDPOINT`
+- `SPACES_REGION`
+- `SPACES_KEY` and `SPACES_SECRET`
+- `SPACES_BUCKET_NAME`
+
+Once configured, file operations automatically switch to cloud API calls for upload, download, move, and delete commands.
+
+## 5. Handling Archived Content Securely
+
+Archived content, including PDFs, screenshots, and HTML snapshots, is treated with care:
+
+- Stored files use consistent naming patterns (`{linkId}.pdf`, `{linkId}.png`, `{linkId}_readability.json`, etc.) within their collection folders.
+
+- Access controls ensure only authorized users can retrieve archived files.
+
+- File reading methods check the existence and serve appropriate content-type headers to safeguard integrity and usability.
+
+
+## 6. Best Practices and Recommendations
+
+To maintain optimal security of your encrypted data storage:
+
+- **Enable HTTPS:** Always deploy Linkwarden behind HTTPS to secure data in transit.
+
+- **Use Cloud Storage for Scalability & Security:** When possible, opt for S3-compatible storage to leverage managed encryption and access controls.
+
+- **Secure Server and Environment Variables:** Protect storage credentials and encryption keys from unauthorized access.
+
+- **Regular Backups:** Take frequent backups of local storage or rely on your cloud provider’s snapshot services.
+
+- **Monitor Access Logs:** Track who accesses archived files and when, to detect suspicious activity.
+
+
+## 7. Troubleshooting Common Storage Issues
+
+<AccordionGroup title="Common Scenarios & Solutions">
+<Accordion title="File Not Found When Accessing Archives">
+If you encounter missing file errors when attempting to retrieve archived content:
+
+- Refresh the page to ensure the file archival process has completed.
+- Confirm that the archival job was successful for the link.
+- Verify your environment variables and bucket configuration for cloud storage.
+- Check server logs for filesystem permission errors.
+</Accordion>
+
+<Accordion title="Failures in File Upload or Deletion Operations">
+- Verify network connectivity to your S3-compatible storage endpoint.
+- Ensure the correct access keys are set with sufficient permissions.
+- Confirm folder paths and file keys follow the expected structure.
+- Look for logged error messages indicating underlying API or filesystem issues.
+</Accordion>
+</AccordionGroup>
+
+## 8. Summary
+
+Linkwarden combines secure transport protocols, flexible storage backends, and organized archival file management to safeguard your data both at rest and in transit. Whether you rely on local server storage or cloud integration with S3-compatible services, Linkwarden ensures your user credentials, saved links, and preserved content remain confidential, accessible, and resilient.
+
+---
+
+### Additional Resources
+- [Securing Your Deployment](/deployment/security-hardening/securing-deployment)
+- [Authentication Methods](/security/auth-and-access/authentication-methods)
+- [Preserving Web Content Forever](/guides/core-user-workflows/preserving-content)
+- [Storage & Environment Configuration](/deployment/getting-started-deployment/environment-configuration)
+
+
+---
+
+### Appendices
+
+#### Example: Environment Variables for S3 Storage
+```env
+SPACES_ENDPOINT=https://nyc3.digitaloceanspaces.com
+SPACES_REGION=nyc3
+SPACES_KEY=your-access-key
+SPACES_SECRET=your-secret-key
+SPACES_BUCKET_NAME=linkwarden-storage
+STORAGE_FOLDER=data
+```
+
+#### Code Snippet: Creating a File (Local or S3)
+```typescript
+import { createFile } from './filesystem/createFile';
+
+await createFile({
+  filePath: 'archives/123/456.pdf',
+  data: pdfBuffer,
+  isBase64: false,
+});
+```
+
+#### Code Snippet: Reading a Stored File with Type Handling
+```typescript
+const { file, contentType, status } = await readFile('archives/123/456.pdf');
+if (status === 200) {
+  // Use file buffer or string
+}
+```
+
+
+---
+
+Your data’s security is a continuous journey. Following these guidelines and understanding Linkwarden’s storage mechanisms ensures a trustworthy experience as you organize and preserve your links.
