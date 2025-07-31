@@ -3,4 +3,201 @@ title: "Can I collaborate or share links with others?"
 description: "Explains options for multi-user collaboration, public sharing, and collection/member permissions. Clarifies differences between private, team, and public link/collection visibility, and available sharing controls."
 ---
 
-*This page will automatically be generated from the codebase*
+# Can I collaborate or share links with others?
+
+This page explains how Linkwarden enables you to collaborate with others, share bookmarks publicly, and manage collection and member permissions. It clarifies the different visibility options available—private, team-based, and public—and the controls you have over sharing links and collections securely and efficiently.
+
+---
+
+## 1. Overview of Sharing and Collaboration
+
+Linkwarden supports flexible collaboration and sharing methods tailored for individuals, teams, and public audiences. The design centers on preserving privacy while allowing seamless teamwork and public exposure when needed.
+
+- **Multi-User Collaboration:** Work within collections shared with specific members with defined permissions.
+- **Public Sharing:** Publish selected links or entire collections publicly via shareable URLs.
+- **Permission Controls:** Fine-grained controls for who can view, add, update, or delete content.
+
+### Why Collaboration Matters
+
+Imagine you're building a shared research library with colleagues. With Linkwarden, you can create a team collection, invite collaborators, and assign them precise roles to keep your project organized—without exposing your data publicly unless you decide to.
+
+---
+
+## 2. Understanding Collection and Link Visibility
+
+Linkwarden organizes bookmarks into collections, each with its own visibility and sharing settings. Understanding these distinctions helps you decide how you want to collaborate or share.
+
+### Private Collections and Links
+
+- Only you and explicitly authorized members can view and modify.
+- Ideal for personal bookmarks or sensitive data.
+- Access controlled via collection membership and permissions.
+
+### Team Collections (Collaborative Sharing)
+
+- Shared within a defined group of members.
+- Members can have different roles—owner, creator, editor—that dictate their capabilities.
+- Members can add, update, delete links as per permissions.
+
+### Public Collections and Links (Public Sharing)
+
+- Collections or individual links can be shared via public URLs.
+- No sign-in required for public viewers.
+- Suitable for sharing resources, research output, or curated bookmarks with a broader audience.
+
+<Tip>
+Public sharing is read-only by default, protecting your collections from unwanted edits while maximizing reach.
+</Tip>
+
+---
+
+## 3. Collaborating with Collection Members
+
+You can invite users to a collection to collaborate by assigning member roles. These roles govern the actions each member can perform:
+
+| Permission      | Description                                         |
+|-----------------|-----------------------------------------------------|
+| Can Create      | Allows adding new links to the collection          |
+| Can Update      | Allows editing existing links and collection data   |
+| Can Delete      | Allows deleting links from the collection           |
+
+### Adding Members and Roles
+
+- Collection owners can invite members by user ID or email.
+- You can adjust permissions dynamically based on collaboration needs.
+- Members need to have appropriate permissions to update or move links within a collection.
+
+### Practical Collaboration Example
+
+> You create a "Research Notes" collection and invite your team. You set some members as editors (can create and update) and others with view-only access. This setup lets you maintain control while benefiting from team contributions.
+
+<Warning>
+Non-owners cannot move links into or out of collections they do not own, maintaining collection integrity and permissions.
+</Warning>
+
+---
+
+## 4. Sharing Links and Collections Publicly
+
+Linkwarden allows you to create public links for either individual bookmarks or entire collections.
+
+### How Public Sharing Works
+
+- When you make a collection or link public, Linkwarden generates a unique URL anyone can visit.
+- Public links are always read-only to protect your data.
+- Public URLs do not require sign-in.
+
+### When to Use Public Sharing
+
+- Sharing research output or reading lists with clients, students, or teammates without requiring them to log in.
+- Publishing curated resources on websites, newsletters, or social media.
+
+### Managing Public Links
+
+- You can enable or disable public sharing at any time.
+- Publicly shared links don’t expose your private collections or data.
+
+---
+
+## 5. Permission and Access Model in Detail
+
+Linkwarden controls access primarily at the collection level, ensuring your link management is secure and flexible.
+
+### Access Checks
+
+- Your permissions to view or modify links depend on your role in the collection.
+- API endpoints enforce access by verifying user role: owner, member with update rights, or no access.
+- Unauthorized users cannot view or edit collections or links.
+
+### Key Access Logic
+
+- **Owners:** Full access including sharing and member management.
+- **Members with Update Rights:** Can add/edit/delete links within their collections but cannot alter membership or ownership.
+- **Non-Members:** No access unless public sharing is enabled.
+
+<Tip>
+Understanding your permissions helps prevent frustration with editing or moving links across collections since these operations require appropriate authorization.
+</Tip>
+
+---
+
+## 6. How to Share Links or Collections (User Flow)
+
+### To Collaborate Within a Team Collection:
+
+1. Create a new collection or select an existing one.
+2. Invite users as members via the user management interface.
+3. Assign permissions based on what collaborators can do.
+4. Members add, edit, and manage links as per assigned roles.
+
+### To Share a Collection or Link Publicly:
+
+1. Select the collection or link.
+2. Enable public sharing option to generate a public URL.
+3. Share the URL with your intended audience.
+4. Revoke public access anytime by disabling the share link.
+
+<Steps>
+<Step title="Invite Collaborators">
+Navigate to the collection settings and send invitations to collaborators by email.
+</Step>
+<Step title="Set Permissions">
+Adjust their role to control create, update, or delete capabilities.
+</Step>
+<Step title="Share Public Link">
+Enable public sharing from the collection or link options and copy the generated URL.
+</Step>
+<Step title="Manage Access">
+Revoke or update sharing and member permissions anytime as needed.
+</Step>
+</Steps>
+
+---
+
+## 7. Practical Tips & Best Practices
+
+- **Start Private, Then Share:** Keep collections private initially to organize before inviting members or enabling public sharing.
+- **Manage Member Roles Carefully:** Limit update/delete permissions to trusted collaborators.
+- **Use Public Sharing for Read-Only Exposure:** Avoid publishing collections with sensitive data.
+- **Regularly Review Access:** Periodically audit which members have access and which links are shared publicly.
+
+<Note>
+Linkwarden includes audit and permission enforcement in the backend, ensuring unauthorized actions are blocked and giving you peace of mind.
+</Note>
+
+---
+
+## 8. Common Issues & Troubleshooting
+
+### I Can’t Edit a Link in a Shared Collection
+
+- Check that you have **Can Update** permission in the collection.
+- Only collection owners and members with edit rights can modify links.
+
+### Public Link Not Working or Inaccessible
+
+- Confirm the collection or link has public sharing enabled.
+- Ensure the URL is shared correctly without typos.
+
+### Moving Links Between Collections is Blocked
+
+- Only collection owners can move links into or out of their collections.
+- If you’re a member, request the owner to move links for you.
+
+---
+
+## 9. Related Documentation
+
+- [Creating and Managing Collaborative Collections](/guides/collaboration-sharing/creating-collaborative-collections)
+- [Sharing Links and Collections Publicly](/guides/collaboration-sharing/sharing-links-publicly)
+- [User Management and Permissions](/guides/collaboration-sharing/user-management-permissions)
+- [Saving and Organizing Links](/guides/core-user-workflows/saving-links)
+- [What is Linkwarden?](/faq/getting-started-usage-faq/what-is-linkwarden)
+
+---
+
+## 10. Summary
+
+Linkwarden empowers you to collaborate with team members securely by managing collection memberships and permissions, while also offering public sharing options to amplify your collections and links externally. Understanding the access models and sharing controls ensures your content remains organized, secure, and appropriately visible. Use collaboration features to enhance teamwork and public sharing to extend the reach of your curated bookmarks.
+
+---
