@@ -3,4 +3,148 @@ title: "Performance: Why is Linkwarden slow or syncing issues appearing?"
 description: "Troubleshooting for performance lags, sync delays, or slow interface. Provides optimization tips, browser/mobile compatibility practices, and basic steps to diagnose network, storage, or resource bottlenecks."
 ---
 
-*This page will automatically be generated from the codebase*
+# Performance: Why is Linkwarden Slow or Syncing Issues Appearing?
+
+This page provides practical guidance and troubleshooting tips for addressing performance lags, interface slowdowns, or synchronization delays in Linkwarden. Whether you experience sluggish response times, delayed bookmark syncing, or intermittent load issues, the advice here will help you diagnose root causes and optimize your setup for smooth, reliable use.
+
+---
+
+## Understanding Performance Challenges
+
+Performance slowdowns can arise from various factors affecting your device, browser, or backend services involved in Linkwarden's operation. Sync issues often stem from network connectivity, processing backlogs, or resource limitations.
+
+### Common Symptoms
+- Slow loading or navigation delays in the Linkwarden interface
+- Sync delays where new or updated bookmarks take time to appear everywhere
+- Interface freezing or lag during large data operations
+- Increased load times on mobile or web clients
+
+---
+
+## Step-by-Step Troubleshooting
+
+### 1. Check Your Network Connection
+
+A stable and fast internet connection is critical for timely syncing and smooth interaction.
+
+- Verify that your device's network connection is stable and has sufficient bandwidth.
+- Avoid restrictive firewalls or proxies blocking Linkwarden’s traffic.
+- Consider testing with a different network if issues persist.
+
+---
+
+### 2. Review Browser and Device Compatibility
+
+Outdated or unsupported browsers/devices can degrade performance.
+
+- Use a modern browser with full JavaScript and WebSocket support (e.g., latest Chrome, Firefox, Edge, Safari).
+- Clear your browser cache and cookies to remove stale or corrupted data.
+- On mobile devices, ensure the Linkwarden app is updated to the latest version.
+
+<Tip>
+Keeping your browsers and apps updated ensures best performance and compatibility with Linkwarden’s latest features.
+</Tip>
+
+---
+
+### 3. Optimize Storage and Resource Usage
+
+Local storage and memory availability on your device can impact front-end responsiveness.
+
+- Clear any unnecessary local data or browser storage that Linkwarden might use.
+- Close other heavy applications or browser tabs to free system resources.
+- Restart your device to clear temporary resource bottlenecks.
+
+### 4. Backend Sync and Processing Status
+
+On the server side, Linkwarden uses workers that handle indexing and archiving in batches.
+
+- Large backlogs of unprocessed links can delay sync updates.
+- Confirm background workers are running properly, especially if self-hosted.
+- The worker scripts process archiving and indexing at intervals (default ~10 seconds). Adjusting these intervals (via environment variables like `ARCHIVE_SCRIPT_INTERVAL`) can improve throughput if your setup allows.
+
+### 5. Review Environment Configuration (Self-Hosted Deployments)
+
+Server resource limits, database performance, and environment variable settings impact overall responsiveness.
+
+- Evaluate database health and response times.
+- Check if environment variables like `MAX_WORKERS`, `ARCHIVE_TAKE_COUNT`, or indexing timeouts (`MEILI_TIMEOUT`) suit your system scale.
+- Ensure storage paths and permissions are correctly configured and accessible.
+
+<Warning>
+Misconfigured environment settings can cause persistent delays or errors in syncing and archiving operations.
+</Warning>
+
+---
+
+## Performance Optimization Tips
+
+- **Batch Size Adjustments**: If experiencing syncing delays, consider increasing `ARCHIVE_TAKE_COUNT` (number of links processed per batch) to speed up archiving.
+- **Worker Interval Tuning**: Lowering the worker interval setting causes more frequent processing but increases server load; find a balance based on available resources.
+- **Use Latest App Versions**: Newer releases of the mobile and web apps often contain performance improvements.
+- **Browser Tab Management**: Avoid multiple open instances of Linkwarden in different tabs or windows which can create conflicting websocket connections.
+- **Regular Maintenance**: Periodically clear browser storage or app caches to prevent slowdowns caused by accumulated data.
+
+---
+
+## Browser and Mobile Compatibility Best Practices
+
+- Use supported browsers with WebSocket and IndexedDB enabled.
+- On mobile, prefer the official Linkwarden app over web use for optimal caching and offline support.
+- Disable aggressive browser extensions or security plugins that may block scripts or WebSocket connections.
+
+<Tip>
+Linkwarden relies on real-time data sync via WebSocket and regional data indexing; stable support for these technologies ensures the best experience.
+</Tip>
+
+---
+
+## Diagnosing Network, Storage, and Resource Bottlenecks
+
+### Network Diagnostics
+
+- Use browser developer tools to inspect WebSocket connections and API response times.
+- Identify failed requests or high latency that could interrupt sync.
+
+### Storage Checks
+
+- Verify sufficient disk space on local systems and server storage targets.
+- Check linked object storage (if configured, e.g., S3 compatible) for accessibility and response times.
+
+### Resource Monitoring
+
+- Monitor CPU and memory utilization on your server instance.
+- For self-hosted, confirm background worker process health and logs to detect errors or stalls.
+
+---
+
+## Common Pitfalls to Avoid
+
+- Running multiple Linkwarden web app tabs that trigger redundant syncing.
+- Ignoring updates or failing to restart the app after configuration changes.
+- Under-provisioned server resources when hosting large collections or many users.
+- Network policies (VPNs, proxies, firewalls) that interrupt WebSocket connections needed for real-time syncing.
+
+---
+
+## When to Seek Further Help
+
+If performance issues persist after applying the above troubleshooting steps:
+
+- Review logs on your instance or mobile app diagnostics.
+- Verify environment settings against [Environment Configuration](https://linkwarden.com/deployment/getting-started-deployment/environment-configuration).
+- Consult community forums or official support for known issues or assistance.
+- Check recent changelogs for any identified performance fixes.
+
+---
+
+### Additional Resources
+- [Troubleshooting Common Setup Problems](https://linkwarden.com/getting-started/troubleshooting-faq/common-setup-issues)
+- [Environment Configuration](https://linkwarden.com/deployment/getting-started-deployment/environment-configuration)
+- [Mobile App Installation and Compatibility](https://linkwarden.com/getting-started/requirements-installation/mobile-app-installation)
+- [Monitoring and Logging Best Practices](https://linkwarden.com/deployment/operational-management/monitoring-logging)
+- [Core Concepts & Terminology](https://linkwarden.com/overview/architecture-concepts/core-concepts)
+
+---
+
+This page equips you to identify and fix key performance and sync challenges in Linkwarden, ensuring a responsive and reliable bookmark management experience across your devices.
