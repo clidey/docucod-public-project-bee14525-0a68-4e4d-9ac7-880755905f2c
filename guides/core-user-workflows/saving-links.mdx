@@ -1,0 +1,187 @@
+---
+title: "Saving and Organizing Links"
+description: "Learn how to quickly add, categorize, and manage bookmarks using Linkwarden's multi-platform inputs. This guide covers adding links via web and mobile, using tags and collections to keep content organized, and leveraging browser extensions and iOS Shortcuts for seamless capture."
+---
+
+# Saving and Organizing Links in Linkwarden
+
+Learn how to quickly add, categorize, and manage bookmarks using Linkwarden’s flexible, multi-platform inputs. This guide walks you through adding bookmarks via web and mobile, organizing your links with tags and collections, and leveraging browser extensions and shortcuts for seamless capture—empowering you to keep your content tidy, accessible, and easy to find.
+
+---
+
+## 1. Workflow Overview
+
+### What This Guide Helps You Accomplish
+This guide enables you to:
+- Add bookmarks (links, PDFs, images) from various devices
+- Organize bookmarks using tags and collections
+- Efficiently manage and maintain your bookmarking library
+- Use browser extensions and iOS Shortcuts for fast capturing
+
+### Prerequisites
+- An active Linkwarden account
+- Access to the Linkwarden web app or mobile app
+- (Optional) Browser extension installed for supported browsers
+
+### Expected Outcome
+By following these instructions, you will be able to effortlessly save new bookmarks with meaningful categorization and organization, ensuring your content is easy to revisit and manage.
+
+### Time Commitment
+You can complete the basic link saving and organizing workflow in under 10 minutes; advanced use of integrations can be implemented progressively.
+
+### Skill Level
+Beginner to Intermediate—no prior experience needed beyond familiarity with web or mobile browsing.
+
+---
+
+## 2. Step-by-Step Instructions
+
+### Adding a New Link via Web
+
+1. **Navigate to Your Dashboard or Desired Collection**
+   - Open the Linkwarden web app and select an existing collection or create a new one.
+2. **Click the 'Add Link' Button**
+   - Locate and click the 'Add Link' button (usually a plus sign or "Add") prominently displayed.
+3. **Fill in Link Details**
+   - Enter the URL of the page you want to bookmark.
+   - Provide a descriptive name/title (optional but recommended).
+   - Add an optional description to remind yourself why you saved the link.
+   - Assign Tags by selecting from existing ones or creating new tags to classify your link.
+   - Choose or confirm the Collection where the bookmark should reside.
+4. **Save the Link**
+   - Click 'Save' or equivalent to add the bookmark.
+
+### Adding a Link via Mobile App
+
+1. **Open the Linkwarden Mobile App**
+2. **Tap the '+' Icon**
+3. **Insert the Bookmark URL**
+   - Paste or type the link you wish to save.
+4. **Enter Additional Metadata**
+   - Add a name, description, tags, and select a collection.
+5. **Tap Save**
+
+### Organizing Bookmarks Using Collections
+
+- Collections function like folders that group related bookmarks.
+- To create a new collection:
+  1. Open the Collections menu.
+  2. Click or tap 'New Collection'.
+  3. Enter a meaningful name.
+  4. Optionally choose a color or icon to visually identify it.
+  5. Save the collection.
+
+- Move bookmarks between collections by editing their collection assignment.
+
+### Using Tags to Categorize Links
+
+- Tags provide flexible labeling to filter and find bookmarks.
+- When saving or editing a bookmark, add tags to describe topics, projects, or statuses.
+- Use multiple tags for cross-cutting organization.
+- To create a new tag, simply enter the tag name when adding or editing a link.
+
+### Leveraging Browser Extensions for Fast Capture
+
+- Install the Linkwarden extension for your preferred browser (Chrome, Firefox, Edge).
+- When browsing, click the extension icon to save the current page directly without switching apps.
+- The extension auto-fills metadata and can prompt for tags and collection.
+- Synchronizes seamlessly with your Linkwarden account.
+
+### Using iOS Shortcuts for Quick Bookmarking
+
+- Set up iOS Shortcuts to capture links and send them to Linkwarden.
+- This allows sharing a webpage from Safari or other apps directly into your Linkwarden collections.
+- Customize shortcuts to add predefined tags or assign collections automatically.
+
+---
+
+## 3. Practical Tips and Best Practices
+
+- **Use Descriptive Names and Descriptions**: Helps you recall why you saved a link when searching later.
+- **Combine Collections and Tags**: Collections provide broad groupings; tags add granular categorization.
+- **Leverage Auto-Tagging Features**: If enabled, Linkwarden can use AI to suggest tags based on link content.
+- **Regularly Review and Clean Up**: Archive or delete stale links to keep your space manageable.
+- **Synchronize Across Devices**: Use the extension and mobile app to keep bookmarks consistent everywhere.
+
+---
+
+## 4. Troubleshooting Common Issues
+
+### Unable to Add a Link
+- Confirm the URL is valid and accessible.
+- Ensure you have permission to add links to the selected collection.
+- Check your internet connection.
+- Refresh your session or log out and in again.
+
+### Tags or Collections Not Appearing
+- Verify you have created the tag or collection.
+- Refresh the page or restart the app.
+- Confirm you have membership rights to view shared collections.
+
+### Browser Extension Not Capturing Links
+- Ensure the extension is installed and enabled.
+- Refresh the browser or reinstall the extension.
+- Verify you are logged into the same Linkwarden account in the extension.
+
+### Mobile App Sync Issues
+- Check your network connectivity.
+- Force sync or refresh the app.
+- Update to the latest mobile app version.
+
+---
+
+## 5. Next Steps & Related Guides
+
+- **Preserving Web Content Forever**: Learn how Linkwarden automatically archives webpages for offline access.
+- **Reading and Highlighting Content**: Discover how to add annotations and interact with saved links.
+- **Creating and Managing Collaborative Collections**: Team up with others for shared bookmark curation.
+- **Importing, Exporting, and Migrating Bookmarks**: Move bookmarks easily in and out of Linkwarden.
+- **Browser Extension Setup and Usage**: Get detailed steps on installing and using extensions.
+
+Explore these guides to maximize your bookmark management and unlock Linkwarden’s full potential.
+
+---
+
+## References
+- [Core Concepts & Terminology](/overview/architecture-concepts/core-concepts)
+- [Browser Extension and Floccus Synchronization](/faq/integration-support-community/browser-extension-floccus-pwa)
+- [Your First Bookmark: Collect, Archive, and Read](/getting-started/configuration-initial-setup/first-bookmark-workflow)
+- [Account Setup and Login](/getting-started/configuration-initial-setup/account-setup-login)
+
+---
+
+<Linkwarden Integration Diagram>
+
+```mermaid
+flowchart TD
+  subgraph User Inputs
+    WebApp["Web App"]
+    MobileApp["Mobile App"]
+    BrowserExt["Browser Extension"]
+    IOSShortcut["iOS Shortcut"]
+  end
+
+  subgraph Linkwarden Services
+    AddLink["Add Link Endpoint"]
+    Organize["Organize Links: Tags & Collections"]
+  end
+
+  WebApp --> AddLink
+  MobileApp --> AddLink
+  BrowserExt --> AddLink
+  IOSShortcut --> AddLink
+
+  AddLink --> Organize
+  Organize --> DB["Bookmark Database"]
+
+  DB --> WebApp
+  DB --> MobileApp
+  DB --> BrowserExt
+
+  classDef inputs fill:#f9f,stroke:#333,stroke-width:2px
+  class User Inputs inputs
+```
+
+---
+
+This straightforward workflow ensures fast, organized bookmarking across all your platforms for effortless retrieval and management.

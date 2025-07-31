@@ -1,0 +1,212 @@
+---
+title: "Importing, Exporting, and Migrating Bookmarks"
+description: "Comprehensive walkthrough of moving bookmarks into and out of Linkwarden, including supported formats, troubleshooting failed imports/exports, and advanced migration tips for transitioning from other tools."
+---
+
+# Importing, Exporting, and Migrating Bookmarks
+
+This guide provides a comprehensive walkthrough for moving bookmarks into and out of Linkwarden. You will learn which formats are supported, how to successfully import and export your bookmarks, troubleshoot common issues, and apply advanced migration techniques when transitioning from other tools.
+
+---
+
+## 1. Overview and Workflow
+
+### What You'll Accomplish
+- Import bookmarks from various platforms and file formats into Linkwarden
+- Export your bookmarks data for backup or migration
+- Understand supported formats and limitations
+- Troubleshoot common errors during import/export
+- Utilize advanced migration tips for seamless transition from external services
+
+### Prerequisites
+- An active Linkwarden account with permission to import/export bookmarks
+- Bookmark export files from your previous tool(s) or existing Linkwarden backups
+- A supported import file format (see below)
+- Optional: Access to the Linkwarden web app where import/export functions are available
+
+### Expected Outcome
+- Bookmarks successfully imported into organized collections within Linkwarden
+- Exported backup file available for safekeeping or transfer
+- Confidence in managing migration without data loss or duplication
+
+### Time Estimate
+- Basic import/export: 5–15 minutes
+- Complex migrations with large datasets or multiple formats: 30+ minutes
+
+### Difficulty Level
+- Beginner to Intermediate
+
+---
+
+## 2. Supported Formats for Import and Export
+
+Linkwarden supports importing bookmarks from various popular formats and services. Understanding these will help you prepare your data appropriately.
+
+| Format           | File Extension(s) | Description                                      |
+|------------------|-------------------|--------------------------------------------------|
+| Linkwarden JSON  | `.json`           | Native format for backup and restore within Linkwarden |
+| HTML Bookmark     | `.html`           | Standard export from most browsers and bookmark managers |
+| Pocket CSV       | `.csv`            | Export from Pocket app, parsed as CSV           |
+| Wallabag JSON    | `.json`           | Export format from Wallabag read-it-later service |
+| Omnivore Zip     | `.zip`            | Archive format from Omnivore service with metadata JSON files |
+
+### Export Output
+- Export a full JSON backup including collections, links, tags, and pinned links
+- Download automatically as `backup.json`
+
+---
+
+## 3. How to Export Your Bookmarks from Linkwarden
+
+Follow these steps to create a backup of your bookmarks:
+
+<Steps>
+<Step title="Access Export Feature">
+  From within the Linkwarden web app, locate the export option (typically in your profile or settings menu).
+</Step>
+<Step title="Initiate Export Request">
+  Trigger the export. This will generate a JSON file containing your complete bookmarks data.
+</Step>
+<Step title="Download Backup File">
+  Your browser will download a `backup.json` file automatically.
+  Save this file securely—it will be used for import or backup purposes.
+</Step>
+</Steps>
+
+<Check>
+Your exported file contains collections, each with their corresponding links and tags. This file can later be used to restore or migrate bookmarks.
+</Check>
+
+---
+
+## 4. How to Import Bookmarks into Linkwarden
+
+### Launching the Import Interface
+- Use the `Import` button in the Linkwarden web interface.
+- A dropdown menu will let you select your source format: Linkwarden Backup, HTML, Pocket CSV, Wallabag JSON, or Omnivore ZIP.
+
+### Step-by-Step Import Process
+
+<Steps>
+<Step title="Choose Your Import Format">
+  Select the source platform/file format from the import dropdown menu.
+</Step>
+<Step title="Select the File to Import">
+  Upload the exported bookmark file from your previous tool or a compatible file.
+</Step>
+<Step title="Begin the Import">
+  The system reads and processes the file. This may take several seconds depending on file size.
+</Step>
+<Step title="Monitoring Progress and Completion">
+  Watch for notifications confirming success or warning if any problems were detected.
+</Step>
+</Steps>
+
+### What Happens During Import
+- Linkwarden parses the file based on the format.
+- Creates new collections (named accordingly, e.g., "Imports" or based on the original collection names).
+- Validates URLs to avoid importing invalid or corrupted links.
+- Adds tags associated with each bookmark.
+- Rejects duplicates silently.
+
+### File Format Specifics
+
+| Format           | Key Notes on Processing                                                            |
+|------------------|------------------------------------------------------------------------------------|
+| Linkwarden JSON  | Preserves collection structure, descriptions, colors, pinned tags                 |
+| HTML Bookmark     | Parses bookmark folders and subfolders to recreate collection hierarchies           |
+| Pocket CSV       | Creates new collection "Imports" with imported links and tags separated by "|"  |
+| Wallabag JSON    | Imports starred/bookmarked status, contents as descriptions, tags, and collections  |
+| Omnivore Zip     | Extracts metadata from multiple JSON files inside zip, aggregates into collections |
+
+---
+
+## 5. Advanced Migration Tips
+
+### Migrating from Other Tools
+- Before export/import, clean up bookmarks in the source tool.
+- Export using the closest supported format.
+- For Omnivore ZIP files, use the built-in processing to parse multiple metadata files.
+
+### Handling Large Imports
+- Be mindful of subscription or storage limits. The system checks if importing exceeds your link limits and rejects overly large imports with a clear error message.
+- Consider breaking large exports into smaller chunks.
+
+### Naming Imports
+- Imported collections are named based on the original source or default to names like "Imports" or "Omnivore Imports." You can rename collections within Linkwarden after import.
+
+---
+
+## 6. Troubleshooting Common Issues
+
+### Import Fails or Errors
+- **File too large:** Check environment or subscription limits; try splitting the export.
+- **Parsing error:** Confirm file format matches the selected import type.
+- **Invalid URLs:** Links with malformed URLs are skipped. Review and clean your export if many fail.
+- **Duplicate bookmarks:** Linkwarden avoids duplicates silently, but duplicates in the original file are ignored.
+
+### Import Does Not Show Expected Bookmarks
+- Refresh the page after import completion.
+- Check the collections pane for newly created collections named after import source.
+- Confirm file contents include bookmarks by opening outside Linkwarden.
+
+### Export Missing Data
+- Ensure you have the necessary user permissions.
+- Verify network stability during export.
+
+<AccordionGroup title="Troubleshooting Tips">
+<Accordion title="Handling Large Files and Limits">
+If your subscription restricts the number of links, imports will be blocked when exceeding the limit. Consider upgrading or importing fewer bookmarks at a time.
+</Accordion>
+<Accordion title="Corrupted or Unsupported Files">
+Ensure the export file is intact and matches the expected format (e.g., JSON, HTML, CSV, ZIP). Open files in text editors or archive managers to verify.
+</Accordion>
+<Accordion title="Dealing with Invalid URLs">
+Links missing valid URLs or with malformed syntax are skipped during import. Review your source export and clean invalid links.
+</Accordion>
+</AccordionGroup>
+
+---
+
+## 7. Practical Examples
+
+### Importing Pocket CSV
+- Export bookmarks from Pocket as CSV file
+- Use Linkwarden's import dropdown and select "From Pocket"
+- Select your exported `.csv` file
+- Import automatically creates a collection named "Imports" and converts tags separated by the "|" character
+
+### Importing from a Browser HTML Bookmark File
+- Export bookmarks from your browser (e.g., Chrome, Firefox) as an HTML file
+- In Linkwarden, select "From HTML"
+- Upload the `.html` file
+- Folder and subfolder structures are reconstructed as collections
+- Bookmarks are added to corresponding collections
+
+### Exporting Linkwarden Bookmarks
+- Go to export in your profile
+- Download the `backup.json` file for backup or migration
+
+---
+
+## 8. Next Steps and Related Resources
+
+- After importing, review and organize your collections: [Saving and Organizing Links](https://linkwarden.com/guides/core-user-workflows/saving-links)
+- To migrate collaborative bookmarks, see: [Creating and Managing Collaborative Collections](https://linkwarden.com/guides/collaboration-sharing/creating-collaborative-collections)
+- Extend bookmarking workflows with API automation: [APIs, Access Tokens, and Automation](https://linkwarden.com/guides/advanced-usage-integrations/api-automation)
+- Troubleshoot import/export issues: [Why can't I add a link or import bookmarks?](https://linkwarden.com/faq/troubleshooting-performance-faq/cannot-add-link-or-import-fails)
+- Understand core concepts behind collections and links: [Core Concepts & Terminology](https://linkwarden.com/overview/architecture-concepts/core-concepts)
+
+---
+
+<Tip>
+Always back up your import files before proceeding. If an import fails, restoring your previous state ensures no data loss.
+</Tip>
+
+<Note>
+For developers or advanced users: Importing and export operations are handled via API endpoints `/api/v1/migration` exposed by Linkwarden, supporting POST for imports with various formats and GET for exporting user data.
+</Note>
+
+---
+
+By following this guide, you will confidently manage your bookmarks migration into and out of Linkwarden, enabling a smooth transition and continued productivity with your curated collections.

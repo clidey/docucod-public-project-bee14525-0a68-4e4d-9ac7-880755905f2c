@@ -1,0 +1,395 @@
+---
+title: "Links (Bookmarks) API"
+description: "Programmatically create, retrieve, update, delete, and bulk manage your bookmarks. Covers adding URLs, editing link metadata, fetching single or multiple links, archiving them, and powering features like search and annotation. Includes examples of advanced actions like bulk updates and deletions."
+---
+
+# Links (Bookmarks) API Reference
+
+Manage your bookmarks programmatically with the Links (Bookmarks) API. This API enables you to create, retrieve, update, delete, and bulk manage links within your collections. It also supports advanced actions such as archiving preserved content, bulk edits, and powering search and annotation workflows.
+
+---
+
+## Overview
+
+The Links API is your gateway to programmatically managing every aspect of your bookmarks in Linkwarden. Whether you're adding a new URL, fetching details about a saved link, editing metadata, or performing bulk operations, this API covers these needs with RESTful endpoints.
+
+You can use the Links API to:
+
+- Add bookmarks with rich metadata including tags and collections.
+- Retrieve single or multiple links, filtered by tags, collections, pinned status, or search queries.
+- Update link details and organize tags and collections.
+- Delete individual or multiple links with safety checks.
+- Trigger archiving actions to preserve link content in various formats.
+
+The API supports all core bookmarking workflows needed to automate or integrate your Linkwarden system with custom apps, scripts, or UI layers.
+
+---
+
+## Base Endpoint
+
+```
+/api/v1/links
+```
+
+All requests are made relative to this base path.
+
+---
+
+## Authentication & Authorization
+
+Every request requires authentication. This is typically handled via session tokens or API Bearer tokens passed in the `Authorization` header.
+
+**Example:**
+```
+Authorization: Bearer YOUR_ACCESS_TOKEN
+```
+
+Unauthorized or unauthenticated requests will be rejected with 401 errors.
+
+---
+
+## Supported HTTP Methods & Endpoints
+
+### 1. GET `/api/v1/links`
+
+Fetch a paginated list of links filtered through searchable parameters.
+
+#### Query Parameters
+
+| Parameter          | Type    | Description                                               |
+|--------------------|---------|-----------------------------------------------------------|
+| `sort`             | number  | Sort order (numeric flag controlling sorting logic).      |
+| `cursor`           | number  | Cursor for pagination to load the next page of results.   |
+| `collectionId`     | number  | Filter links belonging to a specific collection.          |
+| `tagId`            | number  | Filter links tagged with a specific tag ID.               |
+| `pinnedOnly`       | boolean | When true, returns only pinned links.                      |
+| `searchQueryString`| string  | Text search string to match link names or descriptions.   |
+
+#### Example Request
+
+```http
+GET /api/v1/links?sort=0&collectionId=12&tagId=34&pinnedOnly=true&searchQueryString=archive HTTP/1.1
+Authorization: Bearer abc123token
+```
+
+#### Response
+
+Returns a JSON object with matching links and pagination info.
+
+---
+
+### 2. POST `/api/v1/links`
+
+Add a new bookmark link.
+
+#### Request Body
+
+The request body must contain the bookmark details in JSON format.
+
+| Field          | Type                | Required | Description                                           |
+|----------------|---------------------|----------|-------------------------------------------------------|
+| `url`          | string              | Cond.    | The URL of the bookmark (optional if other `type`).  |
+| `name`         | string              | No       | Display name/title of the link.                        |
+| `description`  | string              | No       | Optional user-provided description.                    |
+| `tags`         | array of tag objects | No       | Tags to associate with the link.                       |
+| `collection`   | object (id or name)  | No       | Target collection to save the link under.              |
+| `type`         | string              | No       | Link type like 'url', 'pdf', 'image' etc.              |
+| `image`        | string ('png'/'jpeg')| No       | If supplied, assigns stored archive image format.     |
+
+**Note:** The API prevents duplicates if your account preference is set to avoid repeated URLs.
+
+#### Example Request
+
+```json
+{
+  "url": "https://example.com/article",
+  "name": "Example Article",
+  "description": "A sample article to bookmark",
+  "tags": [{ "name": "research" }],
+  "collection": { "id": 5 },
+  "type": "url"
+}
+```
+
+#### Response
+
+Returns the newly created link object including its ID, tags, and collection info.
+
+---
+
+### 3. PUT `/api/v1/links`
+
+Bulk update multiple links simultaneously.
+
+#### Request Body
+
+```json
+{
+  "links": [<array of link objects to update>],
+  "newData": { "tags": [...], "collectionId": number },
+  "removePreviousTags": boolean
+}
+```
+
+- `links`: The list of links you want to update.
+- `newData`: The new tags and/or collection to apply.
+- `removePreviousTags`: When `true`, existing tags on each link will be removed before applying the new tags.
+
+#### Use Case
+Ideal for mass reorganization, retagging, or moving links across collections.
+
+---
+
+### 4. DELETE `/api/v1/links`
+
+Bulk deletion of links by ID list.
+
+#### Request Body
+
+```json
+{
+  "linkIds": [1, 2, 3]
+}
+```
+
+Deletes all links specified by their IDs, removing all preserved content files and metadata.
+
+---
+
+### 5. GET `/api/v1/links/{id}`
+
+Retrieve details of a single link.
+
+#### URL Parameter
+
+- `id`: The numeric ID of the link to retrieve.
+
+#### Example Request
+
+```http
+GET /api/v1/links/123 HTTP/1.1
+Authorization: Bearer abc123token
+```
+
+#### Response
+
+Returns a detailed object with all bookmark metadata, tags, collections, and archived content status.
+
+---
+
+### 6. PUT `/api/v1/links/{id}`
+
+Update a single link identified by its ID.
+
+#### Request Body
+
+Partial or full link details to update (name, description, tags, collection, pinned status, etc.).
+
+#### Example
+
+```json
+{
+  "name": "Updated Link Name",
+  "description": "Refreshed description."
+}
+```
+
+#### Success
+Returns the updated link object.
+
+---
+
+### 7. DELETE `/api/v1/links/{id}`
+
+Delete a single link by its ID.
+
+This operation removes the link from your collection and cleans up all related archival files.
+
+---
+
+### 8. DELETE `/api/v1/links/archive` (Archiving Actions)
+
+Perform bulk archival actions like clearing or re-preserving archived content.
+
+#### Request Body
+
+Accepts an action type and link IDs.
+
+```json
+{
+  "action": "allAndRePreserve" | "allBroken" | "allAndIgnore",
+  "linkIds": [<link IDs>]
+}
+```
+
+This endpoint allows administrators and authorized users to manage preservation state across many links efficiently.
+
+---
+
+## Request and Response Examples
+
+<CodeGroup>
+```http
+POST /api/v1/links HTTP/1.1
+Authorization: Bearer abc123token
+Content-Type: application/json
+
+{
+  "url": "https://openai.com/blog/chatgpt",
+  "name": "ChatGPT Blog",
+  "tags": [{"name": "AI"}],
+  "collection": {"name": "Research"}
+}
+```
+```json
+{
+  "response": {
+    "id": 128,
+    "url": "https://openai.com/blog/chatgpt",
+    "name": "ChatGPT Blog",
+    "tags": [{"id": 10, "name": "AI"}],
+    "collection": {"id": 4, "name": "Research"}
+  },
+  "status": 200
+}
+```
+</CodeGroup>
+
+
+```http
+GET /api/v1/links?searchQueryString=archive&sort=0 HTTP/1.1
+Authorization: Bearer abc123token
+```
+
+```json
+{
+  "response": {
+    "links": [
+      {
+        "id": 101,
+        "url": "https://example.com",
+        "name": "Example Site",
+        "tags": [{"id": 5, "name": "archive"}],
+        "collection": {"id": 1, "name": "Default"}
+      }
+    ],
+    "nextCursor": null
+  },
+  "status": 200
+}
+```
+
+
+---
+
+## Common Parameters and Objects
+
+### Link Request Query Object
+
+| Field              | Type    | Description                                 |
+|--------------------|---------|---------------------------------------------|
+| `sort`             | number  | Sort order for listing links.               |
+| `cursor`           | number? | Cursor key for pagination.                   |
+| `collectionId`     | number? | Filter links by collection ID.               |
+| `tagId`            | number? | Filter links by tag ID.                       |
+| `pinnedOnly`       | boolean?| Filter only pinned links if true.            |
+| `searchQueryString`| string? | Full-text search term.                        |
+
+
+### Link Object (Excerpt)
+
+| Property            | Type           | Description                                              |
+|---------------------|----------------|----------------------------------------------------------|
+| `id`                | number         | Unique identifier for the link.                          |
+| `url`               | string | null | Bookmark URL, null if type is non-URL.                  |
+| `name`              | string         | Display title of the bookmark.                           |
+| `description`       | string | null | Optional user description.                               |
+| `type`              | string         | Type of content: 'url', 'pdf', 'image', etc.            |
+| `tags`              | array          | Collection of tag objects associated with the link.     |
+| `collection`        | object         | Collection owning the link.                              |
+| `pinnedBy`          | array         | Users who have pinned the link, if any.                  |
+| `archivedContent`   | object         | Fields like image, pdf, monolith for archive status.    |
+
+Refer to the complete data model for full details.
+
+---
+
+## Practical Usage Scenarios
+
+### Adding Your First Bookmark
+
+1. Prepare your link data with URL, optional name, description, tags, and collection.
+2. Call `POST /api/v1/links` with your payload.
+3. On success, receive the complete link object with assigned ID.
+
+### Fetching Links by Tag and Search
+
+1. Use `GET /api/v1/links` with query parameters like `tagId`, and `searchQueryString`.
+2. Navigate through pages using the `cursor` parameter.
+3. Use `sort` to adjust order (e.g., newest first).
+
+### Bulk Editing Tags or Moving Collections
+
+1. Gather the list of links you want to update.
+2. Prepare the `PUT /api/v1/links` request, including `newData` and `links`.
+3. Decide whether to `removePreviousTags` or merge with existing tags.
+
+### Deleting Multiple Links
+
+1. Collect the list of link IDs to delete.
+2. Call `DELETE /api/v1/links` with the `linkIds` array in the body.
+3. Server cleans up all preserved files and metadata.
+
+---
+
+## Best Practices & Tips
+
+- **Prevent Duplication:** Enable 'preventDuplicateLinks' in user settings to avoid saving the same link multiple times.
+- **Pagination:** Always check for `nextCursor` in responses to fetch subsequent pages.
+- **Archival Use:** Use archive endpoints to maintain link preservation beyond metadata.
+- **Bulk Operations:** Use bulk updates/deletions sparingly to reduce server load.
+- **Demo Mode:** In publicly hosted demo environments, write operations may be disabled.
+
+---
+
+## Troubleshooting
+
+### Common Errors
+
+| Status Code | Cause                           | Resolution                           |
+|-------------|--------------------------------|------------------------------------|
+| 400         | Invalid request payload        | Verify JSON schema and required fields. |
+| 401         | Unauthorized                   | Confirm valid authentication token. |
+| 404         | Link or resource not found     | Check the ID is correct and accessible. |
+| 409         | Duplicate Link detected        | Avoid saving the same URL twice if duplication prevention is enabled. |
+| 500         | Internal Server Error           | Retry later or contact support.    |
+
+### Handling Invalid URLs
+
+When submitting links, ensure URLs are valid and accessible. Invalid or unsupported URLs may result in failure or warnings.
+
+### Archived Content Permissions
+
+Modifying or deleting archived content requires appropriate permissions on the collection.
+
+---
+
+## Related APIs
+
+- **Collections API:** Organize and manage collections that group links.
+- **Tags API:** Manage tags for enhanced metadata and filtering.
+- **Highlights API:** Annotate and highlight saved links.
+- **Archive & Preservation API:** Manage preserving snapshots of web content.
+
+---
+
+## Further Reading & Resources
+
+- [Authentication & Authorization](https://linkwarden.com/api-reference/core-workflows/authentication-authorization)
+- [Saving and Organizing Links Guide](https://linkwarden.com/guides/core-user-workflows/saving-links)
+- [Bulk Editing & Search Optimization](https://linkwarden.com/guides/advanced-usage-integrations/optimizing-search-bulk)
+- [API Automation & Tokens](https://linkwarden.com/guides/advanced-usage-integrations/api-automation)
+
+---
+
+Master your bookmarks workflow with the Links API, enabling seamless programmatic control over link management, archiving, and discovery within Linkwarden.

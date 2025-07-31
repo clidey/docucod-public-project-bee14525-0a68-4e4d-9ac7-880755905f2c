@@ -1,0 +1,284 @@
+---
+title: "Backend & Environment Configuration"
+description: "Configure Linkwarden's environment—secrets, database, storage, and archival options. Learn how to use and adjust environment variables to connect all components and enable full features like screenshot capture, PDF archival, and i18n."
+---
+
+# Backend & Environment Configuration
+
+Configure Linkwarden's backend environment to connect essential components like the database, storage, archival features, and AI integrations. This guide walks you through managing environment variables to enable full functionality including screenshot capture, PDF archival, internationalization (i18n), and third-party authentication.
+
+---
+
+## 1. Prerequisites & Overview
+
+Before configuring the backend environment, ensure you have:
+
+- Access to your deployment environment (server or local machine).
+- A supported database (PostgreSQL recommended) up and running.
+- Appropriate permissions to create/edit environment variables or `.env` files.
+- Optional: Credentials for AI providers, email SMTP, and cloud storage services if using those features.
+
+This page focuses exclusively on configuring environment variables—your key to linking Linkwarden's backend services together.
+
+---
+
+## 2. Understanding Environment Variables
+
+Linkwarden uses environment variables stored in a `.env` file or your deployment environment to configure:
+
+- **Database:** Connection URL or Docker password for PostgreSQL
+- **Storage:** Filesystem or AWS S3-compatible cloud storage keys and endpoints
+- **Archival & Preservation:** Settings to enable screenshot and PDF capture
+- **Internationalization (i18n):** Locale settings for UI language support
+- **Authentication:** Secrets and configuration for external SSO providers (Google, GitHub, Auth0, etc.)
+- **Email:** SMTP server credentials for notifications
+- **AI Settings:** API keys and endpoints for AI tagging and processing
+
+These variables enable Linkwarden’s backend components to communicate securely and perform core operations.
+
+---
+
+## 3. Configuring Core Backend Environment Variables
+
+Follow these steps to set up the essential environment variables.
+
+### Step 1: Set Database Connection
+
+You must configure the connection to your PostgreSQL database.
+
+- If using manual installation, set the full `DATABASE_URL`:
+
+  ```bash
+  DATABASE_URL=postgresql://user:password@hostname:5432/linkwarden
+  ```
+
+- If using Docker installation, set only the `POSTGRES_PASSWORD` and Linkwarden will handle the rest:
+
+  ```bash
+  POSTGRES_PASSWORD=your_strong_password
+  ```
+
+Ensure your database is accessible and the credentials are correct.
+
+### Step 2: Configure Storage Settings
+
+By default, Linkwarden uses a local storage folder. You can customize by setting:
+
+```bash
+STORAGE_FOLDER=/path/to/storage
+```
+
+To use AWS S3 or compatible services, provide:
+
+```bash
+SPACES_KEY=your_access_key
+SPACES_SECRET=your_secret_key
+SPACES_ENDPOINT=https://s3.region.provider.com
+SPACES_BUCKET_NAME=bucket-name
+SPACES_REGION=region-code
+SPACES_FORCE_PATH_STYLE=true
+```
+
+### Step 3: Enable Archival Features
+
+To capture screenshots and archive PDFs, Linkwarden uses environment-controlled buffer limits and archival options.
+
+Consider configuring:
+
+```bash
+PDF_MAX_BUFFER=1024
+SCREENSHOT_MAX_BUFFER=512
+PDF_MARGIN_TOP=10
+PDF_MARGIN_BOTTOM=10
+``` 
+
+These control resource limits and appearance margins for PDFs.
+
+### Step 4: Set Internationalization (i18n)
+
+Linkwarden supports multiple locales. Set your default locale in the environment or via config files. Supported locales include `en`, `fr`, `de`, `zh`, `es`, and others.
+
+### Step 5: Configure Authentication Secrets
+
+For your NextAuth authentication to function properly, configure these:
+
+```bash
+NEXTAUTH_URL=http://your-linkwarden-instance.com/api/v1/auth
+NEXTAUTH_SECRET=your_long_random_secret
+```
+
+To enable external Single Sign-On (SSO) providers like Google, GitHub, or Auth0, enable and configure the respective environment keys following your provider’s instructions.
+
+### Step 6: Configure Email SMTP Settings
+
+To enable email notifications, configure:
+
+```bash
+EMAIL_FROM=notifications@yourdomain.com
+EMAIL_SERVER=smtp://username:password@smtp.yourprovider.com:587
+NEXT_PUBLIC_EMAIL_PROVIDER=true
+```
+
+Verify your SMTP credentials with your provider.
+
+### Step 7: Configure AI Integration (Optional)
+
+Linkwarden supports AI tagging and enrichment via compatible providers. To enable AI features, configure the keys and endpoints of your preferred provider:
+
+```bash
+OPENAI_API_KEY=your_openai_key
+OPENAI_MODEL=gpt-4
+NEXT_PUBLIC_OLLAMA_ENDPOINT_URL=https://ollama-endpoint
+OLLAMA_MODEL=model_name
+AZURE_API_KEY=your_azure_key
+AZURE_RESOURCE_NAME=your_azure_resource
+ANTHROPIC_API_KEY=your_anthropic_key
+OPENROUTER_API_KEY=your_openrouter_key
+```
+
+Only configure the providers you will use.
+
+### Step 8: (Optional) Proxy Settings
+
+If your deployment requires a proxy for outbound connections, configure:
+
+```bash
+PROXY=http://proxy.url:port
+PROXY_USERNAME=user
+PROXY_PASSWORD=pass
+PROXY_BYPASS=localhost,127.0.0.1
+```
+
+---
+
+## 4. Working with the `.env` File
+
+Create a `.env` file in your Linkwarden backend root directory and add the above variables. This file should not be committed to version control for security.
+
+Example minimal `.env`:
+
+```env
+NEXTAUTH_URL=http://localhost:3000/api/v1/auth
+NEXTAUTH_SECRET=supersecretkeythatshouldberandomandlong
+DATABASE_URL=postgresql://user:password@localhost:5432/linkwarden
+EMAIL_FROM=notifications@yourdomain.com
+EMAIL_SERVER=smtp://user:pass@smtp.provider.com:587
+```
+
+<Tip>
+For Docker deployments, `POSTGRES_PASSWORD` is often sufficient as Linkwarden connects to the internal database service with defaults.
+</Tip>
+
+<Tip>
+Use secure, random strings for secrets like `NEXTAUTH_SECRET` to protect your authentication flows.
+</Tip>
+
+---
+
+## 5. Verifying Your Configuration
+
+After setting environment variables:
+
+1. Restart your Linkwarden backend service or container to apply changes.
+2. Check startup logs for connection confirmation:
+
+   - Database connection established
+   - Storage path recognized
+   - Archival and AI features initialized if configured
+3. Access your backend health endpoint or UI to verify it is up.
+
+<Tip>
+If you made changes to AI or email settings, test these features specifically by triggering an AI tag or sending a test notification.
+</Tip>
+
+---
+
+## 6. Troubleshooting Common Environment Issues
+
+<AccordionGroup title="Troubleshooting Tips for Environment Configuration">
+<Accordion title="Database Connection Errors">
+- Confirm your `DATABASE_URL` or `POSTGRES_PASSWORD` is correct.
+- Verify network access to PostgreSQL server.
+- Check PostgreSQL logs for authentication errors.
+- Ensure database user has correct privileges.
+</Accordion>
+<Accordion title="Storage Folder Not Found or Unwritable">
+- Check `STORAGE_FOLDER` path permissions.
+- Verify disk space availability.
+- For cloud storage, confirm API keys and endpoint URLs are accurate.
+</Accordion>
+<Accordion title="Authentication Failures">
+- Confirm `NEXTAUTH_SECRET` is set and not empty.
+- Validate SSO providers’ client IDs and secrets.
+- Check your `NEXTAUTH_URL` matches your deployment base URL.
+</Accordion>
+<Accordion title="Email Server Configuration Issues">
+- Validate SMTP credentials and port.
+- Test SMTP server connectivity with a mail client or `telnet`.
+- Look for login or SSL errors in logs.
+</Accordion>
+<Accordion title="AI Provider Connectivity Problems">
+- Verify API keys and endpoint URLs.
+- Check for rate limits or usage restrictions.
+- Review logs for authentication or request errors.
+</Accordion>
+</AccordionGroup>
+
+---
+
+## 7. Advanced Configuration Options
+
+Linkwarden supports many optional environment variables for fine-tuning performance and features. Some of these include:
+
+- `PAGINATION_TAKE_COUNT` – Number of items per page
+- `AUTOSCROLL_TIMEOUT` – Timeout for UI autoscroll
+- Buffer sizes for previews and readability processing
+- Flags to disable registration or control demo mode
+
+See the sample `.env.sample` file included in the repository for the full list.
+
+---
+
+## 8. Security Best Practices
+
+- Never commit `.env` files with secrets to public repositories.
+- Use Vault or environment management tools for secret injection in production.
+- Rotate secrets regularly, including database and SMTP credentials.
+- Limit the scope and permissions of external service keys.
+
+---
+
+## 9. Summary
+
+Configuring Linkwarden’s backend environment with proper environment variables is the cornerstone of a fully functional, scalable, and secure deployment. Taking the time to correctly define your database, storage, archival, AI, and authentication variables ensures stable operation and unlocks Linkwarden’s powerful features.
+
+---
+
+## Additional Resources
+
+- [.env.sample file](https://github.com/linkwarden/linkwarden/blob/main/.env.sample) - Reference for all supported environment variables
+- [Self-Hosted Installation](https://docs.linkwarden.com/getting-started/requirements-installation/self-hosted-installation) - Setup your full backend environment
+- [Account Setup and First Login](https://docs.linkwarden.com/getting-started/configuration-initial-setup/account-setup-login) - Next step after environment configuration
+- [Troubleshooting Common Setup Problems](https://docs.linkwarden.com/getting-started/troubleshooting-faq/common-setup-issues) - Help with common errors
+
+
+---
+
+For a practical example of configuring and verifying environment variables, see the sample below:
+
+```bash
+# Example .env snippet
+NEXTAUTH_URL=http://localhost:3000/api/v1/auth
+NEXTAUTH_SECRET=change_me_to_a_secure_random_string
+DATABASE_URL=postgresql://linkwarden:password@localhost:5432/linkwarden
+STORAGE_FOLDER=/var/lib/linkwarden/storage
+EMAIL_FROM=notifications@example.com
+EMAIL_SERVER=smtp://user:password@smtp.mailprovider.com:587
+PDF_MAX_BUFFER=2048
+SCREENSHOT_MAX_BUFFER=1024
+OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+This sets the fundamental connections you need to get started.
+
+---

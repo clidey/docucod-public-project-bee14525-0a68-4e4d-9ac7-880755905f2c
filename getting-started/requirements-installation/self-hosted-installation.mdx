@@ -1,0 +1,183 @@
+---
+title: "Self-Hosted Installation"
+description: "Step-by-step instructions for deploying Linkwarden on your own infrastructure. Covers Docker-based deployment, environment configuration, secrets setup, and launching the server, enabling full control over data and updates."
+---
+
+# Self-Hosted Installation Guide
+
+Deploying Linkwarden on your own infrastructure maximizes your control over data privacy, updates, and scalability. This guide walks you through setting up Linkwarden using Docker, configuring critical environment variables, managing secrets, and launching the service successfully.
+
+---
+
+## 1. Prerequisites & Requirements
+
+Before you begin, ensure your environment meets the following:
+
+- **Operating System**: Linux (preferred), macOS, or Windows with Docker support
+- **Docker**: Installed and running (Docker Engine and Docker Compose)
+- **System Resources**: Minimum 1 CPU core, 1 GB RAM, and at least 5 GB free disk space
+- **Network**: Ability to open port `3000` for accessing Linkwarden's web UI
+- **PostgreSQL**: Will be deployed as part of the Docker Compose stack
+- **MeiliSearch**: Included in the deployment for full-text search capabilities
+
+<Tip>
+Run the following commands to confirm Docker is installed and running:
+```bash
+docker --version
+docker-compose --version
+```
+If commands fail, install Docker using official docs: https://docs.docker.com/get-docker/
+</Tip>
+
+
+## 2. Preparing Your Environment
+
+### 2.1 Clone or Download
+
+Obtain the Linkwarden repository or files containing the `docker-compose.yml` and `.env.sample` files.
+
+```bash
+git clone https://github.com/linkwarden/linkwarden.git
+cd linkwarden
+```
+
+### 2.2 Environment Variables Setup
+
+Copy the sample environment file and customize it:
+
+```bash
+cp .env.sample .env
+```
+
+Edit `.env` to include your secrets and settings.
+
+Key variables to configure:
+- `POSTGRES_PASSWORD`: Password for the PostgreSQL database user `postgres`. This is critical for database security.
+- `DATABASE_URL`: Optional manual database connection string if not using Docker Compose’s internal database setup.
+- `NEXTAUTH_SECRET`: A random secret string for authentication security (use a strong random string).
+
+<Tip>
+Use a strong password generator (e.g., `openssl rand -base64 32`) for `POSTGRES_PASSWORD` and `NEXTAUTH_SECRET`.
+</Tip>
+
+### 2.3 Optional Configuration
+
+Depending on your setup, you can optionally configure:
+- `PAGINATION_TAKE_COUNT`, `MAX_LINKS_PER_USER` to limit user loads
+- `STORAGE_FOLDER` to specify data persistence location
+- SMTP settings if email integrations are required
+
+Refer to the full `.env.sample` for all available settings.
+
+## 3. Deploying Linkwarden Using Docker Compose
+
+The `docker-compose.yml` file orchestrates three key containers:
+- `postgres`: PostgreSQL database
+- `linkwarden`: The Linkwarden server application
+- `meilisearch`: Full-text search engine
+
+### 3.1 Start the Containers
+
+Run the following command in the directory containing your `docker-compose.yml` file:
+
+```bash
+docker-compose up -d
+```
+
+This command:
+- Pulls required Docker images
+- Creates persistent volume mounts for data
+- Starts containers as background services
+
+<Tip>
+If you wish to build Linkwarden from source instead of using the prebuilt image, uncomment the `build: .` line in `docker-compose.yml` and comment out the `image` line.
+</Tip>
+
+### 3.2 Verify Deployment
+
+Check service status:
+
+```bash
+docker-compose ps
+```
+
+Expected output shows all three containers (`postgres`, `linkwarden`, and `meilisearch`) as **Up**.
+
+Check Linkwarden logs for errors:
+
+```bash
+docker-compose logs -f linkwarden
+```
+
+<Tip>
+If any container repeatedly restarts or shows errors, review your `.env` credentials and Docker volume permissions.
+</Tip>
+
+## 4. Accessing Linkwarden
+
+Open your browser and navigate to:
+
+```
+http://localhost:3000
+```
+
+> Replace `localhost` with your server IP or DNS if remote.
+
+You should see the Linkwarden login or registration page (depending on your environment settings).
+
+## 5. Managing Secrets and Persistent Data
+
+### 5.1 Data Persistence
+
+By default, volumes are mapped as:
+- `./pgdata` for PostgreSQL data
+- `./data` for Linkwarden application data
+- `./meili_data` for MeiliSearch index data
+
+Ensure these directories exist and have appropriate permissions.
+
+### 5.2 Backups
+
+Regularly backup `pgdata` and `data` directories to safeguard your bookmarks and metadata.
+
+## 6. Troubleshooting Common Issues
+
+<AccordionGroup title="Troubleshooting Self-Hosted Installation">
+<Accordion title="Docker Containers Won't Start">
+- Verify Docker and Docker Compose versions.
+- Check `.env` file for missing or invalid variables.
+- Confirm no port conflicts on `3000`.
+- Review logs via `docker-compose logs -f` for errors.
+</Accordion>
+<Accordion title="Database Connection Errors">
+- Ensure `POSTGRES_PASSWORD` matches between `.env` and Docker Compose.
+- Confirm PostgreSQL container is running.
+- Validate `DATABASE_URL` format if customizing.
+</Accordion>
+<Accordion title="Unable to Access Web Interface">
+- Confirm the port mapping is correct (`3000:3000`).
+- Check firewall or cloud provider firewall rules.
+- Use `docker-compose ps` to verify container status.
+</Accordion>
+<Accordion title="Lost Data After Restart">
+- Ensure volumes are properly mounted.
+- Avoid deleting `pgdata`, `data`, and `meili_data` directories.
+</Accordion>
+</AccordionGroup>
+
+## 7. Next Steps
+
+- Configure [Environment Settings](/deployment/getting-started-deployment/environment-configuration) to adjust Linkwarden for your needs.
+- Set up your user account and perform your first login ([Account Setup and First Login](/getting-started/configuration-initial-setup/account-setup-login)).
+- Learn how to start collecting your bookmarks and preserving web content.
+
+---
+
+## Summary
+This guide empowers you to deploy Linkwarden on your own infrastructure, using Docker Compose for simplified container orchestration. By securing your environment variables and managing persistent volumes, you ensure a reliable, private, and scalable installation.
+
+Feel confident to explore customization and scaling options as your usage grows.
+
+<Tip>
+For detailed environmental variable explanations and advanced setups, refer to the [Environment Configuration guide](/deployment/getting-started-deployment/environment-configuration).
+</Tip>

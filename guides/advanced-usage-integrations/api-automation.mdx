@@ -1,0 +1,182 @@
+---
+title: "APIs, Access Tokens, and Automation"
+description: "Hands-on guide to generating API tokens, accessing Linkwarden data programmatically, and building simple automations (including browser extensions, Floccus, iOS Shortcuts, and more). Includes practical security best practices."
+---
+
+# APIs, Access Tokens, and Automation
+
+Unlock the power of Linkwarden beyond its user interface by generating API tokens and automating workflows. This guide walks you through creating access tokens securely, accessing your Linkwarden data programmatically, and integrating with popular tools like browser extensions, Floccus, and iOS Shortcuts. Whether you want to build custom automations, sync bookmarks, or extend Linkwarden functionality, you’ll find practical steps and expert tips here.
+
+---
+
+## 1. Overview
+
+### What You Will Achieve
+This guide helps you:
+- Create API access tokens for your Linkwarden account.
+- Use tokens to securely access Linkwarden data via the API.
+- Understand key automation scenarios enabled by tokens.
+- Learn best practices for token security.
+- Explore integrations like browser extensions and synchronization tools.
+
+### Prerequisites
+- An active Linkwarden account with permissions to create access tokens.
+- Basic knowledge of API usage and HTTP requests.
+- Familiarity with automation tools or programming basics (optional, for advanced use).
+
+### Expected Outcome
+After following this guide, you will be equipped to generate API tokens and use them to automate Linkwarden workflows, safely integrate external apps, or build your own extensions.
+
+---
+
+## 2. Creating API Access Tokens
+
+API tokens grant delegated access to your Linkwarden data without sharing your password, ideal for automation and integrations.
+
+<Steps>
+<Step title="Navigate to Access Tokens Settings">
+Log into your Linkwarden web app and go to **Account Settings**. Find the section labeled **Access Tokens**.
+</Step>
+<Step title="Generate a New Token">
+Click the **New Token** button to open the creation form.
+</Step>
+<Step title="Enter Token Details">
+Provide a descriptive name for your token (e.g., 'iOS App Integration' or 'Team Sync Script').
+Select an expiration period suited to your use case — options include 7, 30, 60, 90 days, or No Expiration.
+</Step>
+<Step title="Create and Save the Token">
+Click **Create Token** to generate it. **Immediately copy and securely save the token value** — you won’t be able to see it again.
+</Step>
+<Step title="Use the Token in Requests">
+Include this token in the Authorization header when making API calls:
+```http
+Authorization: Bearer YOUR_TOKEN_HERE
+```
+</Step>
+</Steps>
+
+<Note>
+Always store API tokens securely and treat them like passwords. If a token is compromised, revoke it immediately.
+</Note>
+
+---
+
+## 3. Accessing Linkwarden Data Programmatically
+
+With your token, you can interact with Linkwarden's RESTful API to create, read, update, and delete bookmarks, collections, tags, and more. This enables powerful automation.
+
+### Example: Fetching Your Recent Bookmarks
+
+```bash
+curl -H 'Authorization: Bearer YOUR_TOKEN_HERE' https://api.linkwarden.app/v1/links?limit=10
+```
+
+This request returns your 10 most recent bookmarks in JSON format.
+
+### Using Tokens in Automation Scripts
+Tokens authenticate scripts securely. For instance, a Python snippet to list collections:
+
+```python
+import requests
+
+API_URL = 'https://api.linkwarden.app/v1/collections'
+TOKEN = 'YOUR_TOKEN_HERE'
+
+headers = {
+  'Authorization': f'Bearer {TOKEN}'
+}
+
+response = requests.get(API_URL, headers=headers)
+if response.ok:
+    print('Collections:', response.json())
+else:
+    print('Error:', response.status_code, response.text)
+```
+
+---
+
+## 4. Practical Automations and Integrations
+
+### Browser Extensions and Floccus
+Linkwarden supports popular extensions that use API tokens to synchronize bookmarks across browsers or devices, keeping your links consistent and accessible.
+
+### iOS Shortcuts and Mobile Workflow
+You can create iOS Shortcuts that use API tokens to add links or fetch data from Linkwarden app, enabling seamless mobile automation.
+
+### Custom Automation Use Cases
+- Automatically tag links based on content or date.
+- Bulk update collections or metadata.
+- Sync with external task managers or note-taking apps.
+- Schedule backup exports or data analysis.
+
+<Tip>
+For integrations involving multiple users or shared collections, be mindful to generate tokens with appropriate scopes and permissions.
+</Tip>
+
+---
+
+## 5. Security Best Practices
+
+- **Limit Token Scope & Expiration:** Use the shortest lifetime and least privileged token needed.
+- **Never Share Tokens Publicly:** Avoid exposing tokens in public code repositories or shared documents.
+- **Revoke Unused Tokens:** Regularly audit and revoke tokens you no longer use.
+- **Monitor API Activity:** Keep an eye on unusual API usage patterns.
+
+<Warning>
+If you suspect a token leakage, immediately revoke the token to prevent unauthorized access.
+</Warning>
+
+---
+
+## 6. Troubleshooting Common Issues
+
+### Token Not Accepted/Error 401 Unauthorized
+- Verify the token is correctly included in the Authorization header as a Bearer token.
+- Check if the token is expired or revoked.
+- Confirm your account permissions.
+
+### Rate Limits or Quotas
+API usage may be rate-limited — avoid rapid repeated calls. Implement retries with exponential backoff.
+
+### Token Not Visible After Creation
+Copy your token immediately after creating it. If lost, revoke and create a new token.
+
+---
+
+## 7. Next Steps
+
+- Explore the [API Reference](https://linkwarden.com/api-reference) for full endpoint documentation.
+- Learn about [User Management and Permissions](https://linkwarden.com/guides/collaboration-sharing/user-management-permissions) to govern token access for teams.
+- Build your own [Custom Integrations](https://linkwarden.com/guides/advanced-usage-integrations/api-automation) using Linkwarden API.
+- Set up [Import/Export workflows](https://linkwarden.com/guides/advanced-usage-integrations/import-export-migration) for bulk data handling.
+
+---
+
+## Useful Links
+
+- [Creating and Managing Access Tokens](https://linkwarden.com/security/auth-and-access/api-access-tokens)
+- [API Reference for Linkwarden](https://linkwarden.com/api-reference)
+- [Using Browser Extensions and Floccus](https://linkwarden.com/faq/integration-support-community/browser-extension-floccus-pwa)
+- [First Steps with Automation](https://linkwarden.com/guides/advanced-usage-integrations/api-automation)
+
+---
+
+## Appendix: Sample API Token Creation Response
+
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "name": "My Automation Token",
+  "expires": "2024-10-15T12:00:00Z",
+  "created": "2024-06-14T07:12:34Z"
+}
+```
+
+Save the `token` value securely to use in API calls.
+
+---
+
+Unlock your Linkwarden data’s full potential by integrating it deeply into your workflows. With API tokens, you gain secure, flexible control to build exactly the automations and tools you need.
+
+
+---

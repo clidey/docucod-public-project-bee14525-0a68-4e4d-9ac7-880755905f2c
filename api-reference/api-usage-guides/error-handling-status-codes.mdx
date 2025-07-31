@@ -1,0 +1,259 @@
+---
+title: "Error Handling & Status Codes"
+description: "See a comprehensive guide to API error responses, HTTP status codes, and best practices for error detection and handling to support reliable integration and consistent recovery from failures."
+---
+
+# Error Handling & Status Codes
+
+Linkwarden’s API is designed to communicate clearly and consistently through well-defined error responses and HTTP status codes. This guide empowers developers integrating with the API to detect, interpret, and recover from errors effectively, ensuring reliable automation and smooth user experiences.
+
+---
+
+## Understanding API Error Handling
+
+Error handling is crucial in managing expectations between client applications and the server. Linkwarden returns structured JSON error responses combined with appropriate HTTP status codes so clients can programmatically identify issues and react accordingly.
+
+### What Happens When an Error Occurs?
+When an API request fails due to invalid input, permissions, or unexpected problems, Linkwarden’s API responds using:
+
+- **HTTP status code** indicating the category of the problem
+- **JSON response body** containing a `response` field with a descriptive error message
+
+This consistent pattern lets your client detect errors and provide meaningful feedback or recovery steps.
+
+<Info>
+Example JSON error response:
+```json
+{
+  "response": "Permission denied."
+}
+```
+</Info>
+
+## Common HTTP Status Codes and Their Meaning
+
+Linkwarden’s API surfaces standard HTTP status codes for errors, with custom messaging in the response body. Understanding these statuses is essential for accurate error handling.
+
+| Status Code | Meaning                     | Common Causes                              | Recovery Guidance                         |
+|-------------|-----------------------------|-------------------------------------------|------------------------------------------|
+| 200         | Success                     | Request processed successfully             | Proceed with normal workflow             |
+| 400         | Bad Request                 | Validation errors, malformed input, demo mode restrictions | Validate input data, retry with correct payload | 
+| 401         | Unauthorized                | Authentication failure, invalid token, insufficient permissions | Check auth credentials or token scopes, reauthenticate | 
+| 403         | Forbidden                  | Access to resource explicitly denied       | Verify user permissions or roles          |
+| 404         | Not Found                  | Resource such as link or user does not exist | Confirm resource ID is correct and accessible |
+| 405         | Method Not Allowed         | HTTP method not supported by endpoint      | Use supported HTTP methods (GET, POST, etc.) |
+| 429         | Too Many Requests          | Rate limit exceeded (see Rate Limiting guide) | Implement retry with backoff, respect quotas |
+| 500+        | Server Errors              | Unexpected internal errors                  | Contact support if persistent, retry later |
+
+### Demo Mode Restrictions
+If running in demo mode with limited write capabilities, attempts to modify data will reply with:
+```json
+{
+  "response": "This action is disabled because this is a read-only demo of Linkwarden."
+}
+```
+with HTTP 400 status code.
+
+Ensure that your client handles this gracefully by disabling write features or prompting users accordingly.
+
+## Structured Error Responses
+
+Every failed API call returns a JSON object with a single field:
+
+- **response** - A string message describing the cause of failure in human-readable form.
+
+This lets your applications parse the error and present actionable messages or trigger conditional logic.
+
+### Example: Link Retrieval Permission Denied
+
+```json
+{
+  "response": "Permission denied."
+}
+```
+
+Your application can catch this and inform the user they lack rights to view the requested link.
+
+## Best Practices for Handling Errors
+
+To build resilient integrations with the Linkwarden API, follow these actionable strategies:
+
+### 1. Validate Inputs Before Submission
+Use Linkwarden’s request schemas (see [Schema Validation](https://linkwarden.com/api-reference/core-workflows/user-accounts-api)) to ensure payloads meet requirements:
+- Mandatory fields provided
+- Correct formats (emails, URLs)
+- Allowed data ranges (string lengths, enums)
+
+Early validation reduces 400 errors and improves user experience.
+
+### 2. Handle Authentication and Authorization Carefully
+- Always include valid session or API tokens
+- Handle 401 responses by prompting for login or token refresh
+- Respect permission-denied messages (401 or 403) and adjust UI or workflows
+
+### 3. Use Status Codes to Guide Control Flows
+Use status codes programmatically:
+- Retry 500 internal errors after delays
+- Stop immediate retries on 400 bad request errors
+- Prompt users or admins on persistent 401 unauthorized errors
+
+### 4. Detect Rate Limiting Early
+Implement exponential backoff and monitor for 429 responses. See the [Rate Limiting & Quotas guide](https://linkwarden.com/api-reference/api-usage-guides/rate-limiting-quotas) for details.
+
+### 5. React to Demo Mode Restrictions
+Detect demo mode error messages to disable unsupported write operations dynamically during integration or testing.
+
+<Warning>
+Ignoring error responses or assuming success can lead to data inconsistency and poor user experience. Always check HTTP status and message.
+</Warning>
+
+## Troubleshooting Common Error Scenarios
+
+### Invalid Parameters or Payloads (400 Bad Request)
+Cause:
+- Missing required fields
+- Invalid field values (e.g., emails, passwords shorter than 8 chars)
+- Unsupported file types or exceeding size limits
+
+Resolution:
+- Use the provided Zod validation schemas from Linkwarden to pre-validate inputs before API calls
+- Review field constraints like max length, regex patterns, and enum values
+
+### Authentication Failures (401 Unauthorized)
+Cause:
+- Expired or missing token
+- Invalid credentials
+- Insufficient permissions
+
+Resolution:
+- Verify authentication tokens are included in requests
+- Reauthenticate or refresh tokens as needed
+- Confirm user roles and scopes have access to intended API
+
+### Permission Denied (401 or 403)
+Cause:
+- User lacks update/delete rights on resource
+- Trying to access another user’s data without admin privileges
+
+Resolution:
+- Check and request required permissions through collaboration settings
+- Handle this gracefully by disabling certain features in UI
+
+### Resource Not Found (404)
+Cause:
+- Specified resource ID does not exist
+- Accessing archived or deleted link
+
+Resolution:
+- Validate resource IDs before requesting
+- Handle 404 by prompting user to check inputs or contact support
+
+### Unsupported HTTP Methods (405)
+Cause:
+- Using PUT on a route that only supports GET and POST
+
+Resolution:
+- Consult API reference for allowed methods per endpoint
+
+### Server Errors (500+)
+Cause:
+- Unexpected errors on backend
+
+Resolution:
+- Retry with delay
+- Report persistent errors to support team
+
+<Check>
+Ensure your integration logs all errors for diagnostic insights and adjust your user-facing messages based on error details.
+</Check>
+
+## Integrated Error Handling Examples
+
+### Example 1: Handling Link Creation Failure
+Attempting to create a link when in demo mode results in 400 error:
+
+```javascript
+const response = await fetch('/api/v1/links', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ url: 'https://example.com' }),
+});
+
+if (!response.ok) {
+  const data = await response.json();
+  if (response.status === 400 && data.response.includes('demo')) {
+    alert('Link creation is disabled in demo mode.');
+  } else {
+    alert(`Error: ${data.response}`);
+  }
+}
+```
+
+### Example 2: Detecting Unauthorized Access
+
+When trying to fetch links the user does not have permission for, the API returns 401 with "Permission denied."
+
+```javascript
+const response = await fetch('/api/v1/links');
+if (response.status === 401) {
+  alert('You are not authorized to access these links. Please log in with appropriate account.');
+}
+```
+
+## Summary
+Mastering Linkwarden’s error responses and HTTP status codes equips you to build robust API integrations that handle failures gracefully and keep your application’s users informed and in control.
+
+---
+
+For full synergy:
+- Review [Authentication & Authorization](https://linkwarden.com/api-reference/core-workflows/authentication-authorization) for secure access management
+- Check [Rate Limiting & Quotas](https://linkwarden.com/api-reference/api-usage-guides/rate-limiting-quotas) to avoid throttling
+- Learn about [API Tokens & Keys](https://linkwarden.com/api-reference/advanced-features/tokens-and-api-keys) for programmatic access
+- Explore [Core API Workflows](https://linkwarden.com/api-reference/core-workflows) for common user-centric requests
+
+
+---
+
+# Appendix: Quick Reference Status Code Table
+
+| HTTP Status | Meaning                  | Action / Interpretation                 |
+|-------------|--------------------------|----------------------------------------|
+| 200         | OK                       | Request succeeded                       |
+| 400         | Bad Request              | Check input & retry after correction   |
+| 401         | Unauthorized             | Authenticate or refresh credentials    |
+| 403         | Forbidden                | Insufficient permissions               |
+| 404         | Not Found                | Check resource existence & ID          |
+| 405         | Method Not Allowed       | Use supported HTTP methods             |
+| 429         | Too Many Requests        | Back off and retry respecting limits   |
+| 500+        | Server Errors            | Retry later or contact support         |
+
+
+---
+
+# Support
+
+If you encounter persistent or unclear error messages, consult the [Troubleshooting & Common Issues guides](https://linkwarden.com/getting-started/troubleshooting-faq), or reach out to Linkwarden support for assistance.
+
+
+---
+
+## Glossary
+
+- **Error response**: A message indicating failure of an API call
+- **HTTP status code**: Standardized code representing request result
+- **Demo mode**: A restricted mode that disables writes
+- **Validation**: The process of checking input correctness
+
+
+---
+
+## Related Documentation
+
+- [Authentication & Authorization API](https://linkwarden.com/api-reference/core-workflows/authentication-authorization)
+- [Links (Bookmarks) API](https://linkwarden.com/api-reference/core-workflows/bookmarks-links-api)
+- [User Accounts API](https://linkwarden.com/api-reference/core-workflows/user-accounts-api)
+- [API Keys & Tokens](https://linkwarden.com/api-reference/advanced-features/tokens-and-api-keys)
+- [Rate Limiting & Quotas](https://linkwarden.com/api-reference/api-usage-guides/rate-limiting-quotas)
+
+
+---

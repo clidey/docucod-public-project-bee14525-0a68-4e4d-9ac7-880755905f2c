@@ -1,0 +1,141 @@
+---
+title: "Mobile App Installation"
+description: "Guide to installing Linkwarden's mobile app for iOS or Android, including download, permissions, and initial setup. Covers connecting your app to a cloud or self-hosted backend for seamless bookmark management on the go."
+---
+
+# Mobile App Installation
+
+Welcome to the quick and practical guide for installing the Linkwarden mobile app on your iOS or Android device. This guide takes you through downloading the app, granting necessary permissions, and performing the initial setup to connect seamlessly with your preferred backend—whether cloud-hosted or self-hosted. Get ready to manage your bookmarks from anywhere with simplicity and security.
+
+---
+
+## 1. Preparing for Installation
+
+Before you install the Linkwarden mobile app, ensure the following:
+
+- **Supported Devices:** iOS devices running iOS 13 or later, Android devices running Android 7.0 (Nougat) or later.
+- **Network Connectivity:** A stable internet connection for download and backend syncing.
+- **Backend Account:** Access credentials for your Linkwarden backend service (cloud or self-hosted).
+
+<Tip>
+If you haven’t selected your backend deployment yet, visit the [Choosing Your Deployment: Cloud vs. Self-Hosted](https://docs.linkwarden.app/getting-started/requirements-installation/choosing-your-deployment) page to help decide.
+</Tip>
+
+## 2. Downloading and Installing the App
+
+### For iOS Devices
+
+1. Open the **App Store** on your iPhone or iPad.
+2. Search for **Linkwarden** in the search bar.
+3. Locate the official Linkwarden app and tap **Get**.
+4. Authenticate the download using Face ID, Touch ID, or your Apple ID password.
+5. Wait for the app to install on your device.
+
+### For Android Devices
+
+1. Open the **Google Play Store**.
+2. Search for **Linkwarden**.
+3. Select the official app and tap **Install**.
+4. Once installed, open the app from the Play Store or your app drawer.
+
+<Note>
+Linkwarden requires permissions like internet access and storage for bookmarks syncing and caching. These will be requested automatically during installation or at the first launch.
+</Note>
+
+## 3. Giving Required Permissions
+
+The Linkwarden mobile app requires certain permissions to operate effectively:
+
+- **Internet Access:** For syncing bookmarks to and from the backend.
+- **Storage Access:** To cache bookmark data and improve offline performance.
+- **Notification Access (optional):** To receive syncing and update notifications.
+
+### Granting Permissions
+
+Upon first launch, the app will prompt you to allow these permissions. Accept all necessary requests:
+
+1. Tap **Allow** when prompted for internet and storage permissions.
+2. For notifications, you can choose to allow or skip depending on your preferences.
+
+<Tip>
+If you deny any permission initially, you can enable it later by navigating to Settings > Apps > Linkwarden > Permissions on your device.
+</Tip>
+
+## 4. Initial Setup and Connecting to Your Backend
+
+After installation and permission granting, you will connect the app to your Linkwarden backend.
+
+### Steps to Connect:
+
+1. **Launch the Linkwarden app.**
+2. On the welcome screen, enter the URL of your backend server:
+   - For **cloud users**, this is your standard Linkwarden cloud URL.
+   - For **self-hosted users**, enter your self-hosted backend’s full URL.
+3. Tap **Next** to proceed.
+4. Enter your **username and password** associated with your backend account.
+5. Tap **Login**.
+6. The app will fetch your bookmarks and synchronize settings from the backend.
+
+<Warning>
+Ensure your backend URL is accessible from your mobile device’s network. For self-hosted setups, verify VPN or firewall settings if you encounter connection failures.
+</Warning>
+
+## 5. Verifying Successful Setup
+
+Upon first login, Linkwarden will synchronize your bookmarks:
+
+- The app home screen will display your collections and the latest synced links.
+- Pull-to-refresh or sync status indicators will confirm active syncing.
+
+To confirm everything is working:
+
+- Add a new bookmark via the app or through your backend web interface.
+- Verify the bookmark appears and syncs both ways within moments.
+
+<Check>
+If bookmarks do not appear after login, verify your backend URL and credentials, and check your device’s network connection.
+</Check>
+
+## 6. Tips for a Smooth Mobile Experience
+
+- Enable **background app refresh** to allow Linkwarden to sync bookmarks even when the app is not active.
+- Regularly update the mobile app via your app store to access the latest features and security fixes.
+- Use the built-in share sheet or browser extensions to quickly save links to Linkwarden from your mobile browser.
+
+## 7. Troubleshooting Common Installation and Setup Issues
+
+<AccordionGroup title="Troubleshooting & Tips">
+<Accordion title="App Not Installing or Crashing">
+- Verify your device meets minimum OS requirements.
+- Restart your device and retry installation.
+- Check app store status or update your device’s software.
+</Accordion>
+<Accordion title="Permissions Not Granted or Missing">
+- On iOS, go to Settings > Linkwarden and toggle permissions.
+- On Android, go to Settings > Apps > Linkwarden > Permissions.
+- Reinstall the app if permission prompts are not showing.
+</Accordion>
+<Accordion title="Cannot Connect to Backend">
+- Double-check backend URL is correct and reachable.
+- Ensure your device has internet access.
+- For self-hosted backends, verify firewall or VPN configurations.
+</Accordion>
+<Accordion title="Sync Issues or Missing Bookmarks">
+- Perform a manual refresh.
+- Log out and back in.
+- Verify backend status at your server or cloud status page.
+</Accordion>
+</AccordionGroup>
+
+---
+
+## Additional Resources
+
+- [Choosing Your Deployment: Cloud vs. Self-Hosted](https://docs.linkwarden.app/getting-started/requirements-installation/choosing-your-deployment) — Select your ideal backend.
+- [Account Setup and First Login](https://docs.linkwarden.app/getting-started/configuration-initial-setup/account-setup-login) — Configure your user account on mobile.
+- [Self-Hosted Installation](https://docs.linkwarden.app/getting-started/requirements-installation/self-hosted-installation) — Set up your own backend server.
+- [Troubleshooting Common Setup Problems](https://docs.linkwarden.app/getting-started/troubleshooting-faq/common-setup-issues) — Resolve common startup errors.
+
+---
+
+With your Linkwarden mobile app installed and connected, you’re now ready to manage, organize, and preserve your bookmarks on the go—unlocking productivity wherever you are.

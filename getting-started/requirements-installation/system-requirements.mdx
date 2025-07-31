@@ -1,0 +1,175 @@
+---
+title: "System Requirements"
+description: "Understand the minimum hardware, software, and network prerequisites necessary for running Linkwarden reliably, including supported environments for both cloud and self-hosted deployments. This ensures installation proceeds smoothly and resources are properly allocated."
+---
+
+# System Requirements
+
+To ensure a smooth and reliable experience with Linkwarden, this guide outlines the essential hardware, software, and network prerequisites. Whether you plan to use Linkwarden as a cloud service or deploy it yourself, observing these requirements guarantees optimal performance and stability.
+
+---
+
+## 1. Supported Environments
+
+Linkwarden supports two primary deployment scenarios:
+
+- **Cloud Deployment (Linkwarden Hosted Service):** Access via web or mobile apps without local installation.
+- **Self-Hosted Deployment:** Installing and running Linkwarden on your own infrastructure.
+
+The requirements below cover both environments, with specific notes where necessary.
+
+---
+
+## 2. Hardware Requirements
+
+### Cloud Usage
+If you use Linkwarden’s hosted service, no local server hardware is required beyond the devices you use to access Linkwarden (e.g., computers, smartphones).
+
+### Self-Hosted Deployment
+
+| Component       | Minimum Specification                           | Recommended Specification                           | Notes                                  |
+|-----------------|------------------------------------------------|----------------------------------------------------|----------------------------------------|
+| CPU             | Quad-core 2.0 GHz or higher                     | Hexa-core 2.5 GHz or higher                         | Multi-core improves background archiving and AI processing |
+| Memory (RAM)    | 4 GB                                           | 8 GB or more                                       | Ensures smooth operation with multiple users |
+| Storage         | 20 GB disk space                               | SSD with 50+ GB available                           | Fast storage improves archive and database operations |
+| Network         | Stable broadband connection                     | Gigabit Ethernet preferred (for on-premises servers) | Network speed impacts syncing and archival services |
+
+---
+
+## 3. Software Requirements
+
+### Supported Operating Systems
+
+- **Linux** distributions (Ubuntu 20.04 LTS+, Debian 11+, CentOS 8+)
+- **Windows** 10 and above (for local client-side tools or desktop access)
+- **macOS** 11 (Big Sur) and above
+
+> Note: For self-hosted servers, Linux-based environments are recommended for robustness and compatibility.
+
+### Runtime and Dependencies
+
+- **Node.js:** Version 18.x or later (LTS recommended);
+  Used for backend API and services.
+
+- **Docker:** Version 20.x or later (optional but recommended for containerized deployment).
+
+- **Database:** 
+  - PostgreSQL 13 or higher (self-hosted deployments require a supported database engine).
+  - Cloud users depend on hosted database—no action needed.
+
+- **Web Browsers:** Latest versions of Chrome, Firefox, Safari, or Edge for web app access.
+
+- **Mobile Platforms:**  
+  - iOS 12.0 or later for iPhone/iPad apps
+  - Android 6.0 (Marshmallow) or later for mobile app
+
+---
+
+## 4. Network & Connectivity Requirements
+
+- **Internet Access:** Required for syncing, archiving, and AI tagging features.
+- **Ports:** 
+  - **HTTP(S):** Ports 80 and 443 open for web access and API communication.
+  - **Database Access:** If self-hosted on a separate machine, ensure PostgreSQL port (default 5432) is open and secured.
+
+- **Firewall Configuration:** Adjust firewall and security groups to allow inbound/outbound traffic for necessary ports.
+
+- **Proxy Support:** Linkwarden supports operation behind proxies; configure environment variables accordingly.
+
+---
+
+## 5. Additional Considerations for Self-Hosted Deployments
+
+- **Backup Storage:** Ensure adequate space and a backup strategy for database and archived web content.
+- **SSL/TLS Certificates:** For secure HTTPS communication, configure valid SSL certificates.
+- **Resource Monitoring:** Monitor CPU, memory, and disk IO to maintain stable performance.
+
+---
+
+## 6. Verifying Your Environment
+
+Before installation or connecting to the cloud service:
+
+1. Verify OS version:
+
+```bash
+uname -a  # Linux/macOS
+systeminfo # Windows
+```
+
+2. Check Node.js version:
+
+```bash
+node -v
+# Expected output: v18.x.x or higher
+```
+
+3. Confirm Docker installation and version (if using containers):
+
+```bash
+docker --version
+# Expected output: Docker version 20.x.x
+```
+
+4. Validate PostgreSQL version (self-hosted deployments):
+
+```bash
+psql --version
+# Expected: 13 or later
+```
+
+5. Test network connectivity to required ports:
+
+```bash
+curl -I https://your-linkwarden-instance.com
+# Should return headers without error
+```
+
+---
+
+## 7. Troubleshooting Common Setup Issues
+
+<AccordionGroup title="Common System Requirements Issues">
+<Accordion title="Node.js Not Found or Incorrect Version">
+Ensure Node.js is installed and on version 18 or later. Use the Node.js official site or your OS package manager to upgrade.
+</Accordion>
+<Accordion title="Docker Not Running or Not Installed">
+Docker must be installed and running correctly if deploying via containers. Restart Docker service or reinstall if errors persist.
+</Accordion>
+<Accordion title="Insufficient Disk Space or Permissions">
+Check permissions and available disk space on persistent storage directories and database locations. Correct permissions to allow service access.
+</Accordion>
+<Accordion title="Network Ports Blocked by Firewall">
+Verify firewall settings allow traffic on HTTP/HTTPS and PostgreSQL ports. For cloud access, ensure your local firewall does not block ports 80 and 443.
+</Accordion>
+</AccordionGroup>
+
+---
+
+## 8. Next Steps
+
+With the system requirements confirmed and environment validated, proceed to:
+
+- **Choosing Your Deployment:** Decide between cloud service or self-hosted installation ([Choosing Your Deployment: Cloud vs. Self-Hosted](/getting-started/requirements-installation/choosing-your-deployment))
+
+- **Installation:** Follow detailed installation instructions for your selected method ([Self-Hosted Installation](/getting-started/requirements-installation/self-hosted-installation))
+
+- **Configuration:** Prepare necessary environment variables and passwords ([Backend & Environment Configuration](/getting-started/configuration-initial-setup/environment-configuration))
+
+- **First Run:** Launch Linkwarden and create your first bookmark to experience the core features ([Your First Bookmark: Collect, Archive, and Read](/getting-started/configuration-initial-setup/first-bookmark-workflow))
+
+---
+
+## 9. Additional Resources
+
+- [Core Concepts & Terminology](/overview/architecture-concepts/core-concepts) — Understanding the building blocks of Linkwarden
+- [Troubleshooting Common Setup Problems](/getting-started/troubleshooting-faq/common-setup-issues) — Fix common hurdles on initial setup
+- [Self-Hosted Deployment Architecture Overview](/overview/architecture-concepts/system-architecture) — Technical overview for administrators
+
+<Tip>
+Always maintain your system updated and monitor the resource usage periodically to ensure Linkwarden runs smoothly and scales with your needs.
+</Tip>
+
+---
+
+By adhering to these system requirements, you set a strong foundation for Linkwarden’s reliable operation, preserving your web knowledge efficiently whether you choose hosted or self-managed solutions.
